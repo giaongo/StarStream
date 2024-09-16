@@ -1,0 +1,4 @@
+Dockerfile
+src/_pycache_
+src/*/_pycache_
+.git
