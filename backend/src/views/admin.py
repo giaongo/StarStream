@@ -7,6 +7,11 @@ admin = Blueprint('admin', __name__)
 
 @admin.route('/login', methods=['POST'])
 async def login(): 
+    """login user
+
+    Returns:
+        _type_: _description_
+    """
     return {'admin': 'login successfully'}, 200
 
 

@@ -1,3 +1,5 @@
 quart[dotenv]
 quart-cors
 quart-db[postgresql]
+quart-schema
+pdoc3
