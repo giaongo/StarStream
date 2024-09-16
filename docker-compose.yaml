@@ -6,4 +6,25 @@ services:
     volumes:
       - ./backend:/backend
     container_name: backend
-    
+    depends_on:
+      postgresql:
+          condition: service_healthy
+  
+  postgresql:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - persist-volume:/var/lib/postgresql/data
+      - ./backend/postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+      - ./backend/.env
+    container_name: postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamuser -d starstream_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  persist-volume:

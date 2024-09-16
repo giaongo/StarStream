@@ -1,4 +1,5 @@
 from dotenv import find_dotenv, load_dotenv
+from quart_db import QuartDB
 from quart_schema import QuartSchema
 from .models.types import App
 from quart import Quart
@@ -12,6 +13,8 @@ def create_app() -> App:
     app = cors(app, allow_origin='*')  
     QuartSchema(app)
     app.secret_key = os.getenv('APP_SECRET')
+    
+    QuartDB(app, url=f'postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgresql:5432/{os.getenv('POSTGRES_DB')}')
 
     from .views.event import event
     from .views.admin import admin
