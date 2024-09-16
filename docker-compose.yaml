@@ -4,6 +4,6 @@ services:
     ports:
       - "5001:5001"
     volumes:
-      - ./backend: /backend
+      - ./backend:/backend
     container_name: backend
     
