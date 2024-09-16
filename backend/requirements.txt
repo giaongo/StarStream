@@ -1,0 +1,3 @@
+quart[dotenv]
+quart-cors
+quart-db[postgresql]
