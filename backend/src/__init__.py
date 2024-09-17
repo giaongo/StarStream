@@ -1,6 +1,5 @@
-from .controllers.adminController import test_database
 from dotenv import find_dotenv, load_dotenv
-from quart import app
+from quart_auth import QuartAuth
 from quart_bcrypt import Bcrypt
 from quart_db import QuartDB
 from quart_schema import QuartSchema
@@ -29,7 +28,11 @@ def create_app() -> App:
     # brcypt hashing setup
     Bcrypt(app)
     app.secret_key = os.getenv('APP_SECRET')
-
+    
+    # #QuartAuth setup
+    app.auth_manager = QuartAuth(app)
+    app.config['QUART_AUTH_MODE'] = 'bearer'    
+    
     # register routing blueprints
     from .views.event import event
     from .views.admin import admin

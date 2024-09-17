@@ -1,5 +1,5 @@
 from src.models.types import User
-from src.controllers.adminController import add_default_admin, test_database
+from src.controllers.adminController import add_default_admin
 from dotenv import find_dotenv, load_dotenv
 from quart_db import QuartDB
 from src import create_app

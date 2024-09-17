@@ -1,13 +1,15 @@
+import logging
 from dotenv import find_dotenv, load_dotenv
-from quart import app
-from  ..controllers.adminController import add_default_admin, test_database
+from quart import app, current_app
+from quart_auth import AuthUser, QuartAuth, current_user, login_required, login_user
+from  ..controllers.adminController import check_login
 from quart import Blueprint
 from ..models.types import User
-import os
+
 admin = Blueprint('admin', __name__)
-
+log = logging.getLogger(__name__)
 load_dotenv(find_dotenv())
-
+    
 @admin.post('/login')
 async def login(): 
     """login user
@@ -15,10 +17,21 @@ async def login():
     Returns:
         _type_: _description_
     """
-    result = await test_database()
-    print(f'check and add amin result', result)
-    return {'admin': 'login successfully'}, 200
+    log.info("login route is called")
+    result = await check_login(User(email='admin@starstream.com', password='adminnokia@Stream2024'))
+    if result: 
+        user = {'email': 'admin@starstream.com', 'id': 1}
+        login_user(AuthUser(user))
+        token = current_app.auth_manager.dump_token(user)
+        return {'message': f'login {result} with token {token}'}, 200
+    
+    return {'message': f'failed login'}, 401
 
+   
+@admin.get('/profile')
+@login_required
+async def profile():
+    return {'admin': f'current user is {current_user}'}, 200
 
 @admin.post('/logout')
 async def logout():

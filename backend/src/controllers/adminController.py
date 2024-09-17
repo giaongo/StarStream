@@ -1,9 +1,8 @@
+from asyncio.log import logger
 import asyncpg
-import bcrypt
 from ..models.types import User
 from quart import g
 from quart_bcrypt import check_password_hash, generate_password_hash
-
 
 def hash_password(password:str) -> str:
     """Hashing raw password
@@ -40,7 +39,7 @@ async def admin_exists(email: str, conn:any) -> bool|None:
         bool|None
     """
     try: 
-        user_result = await conn.fetchrow("SELECT * FROM admin where email = $1", email)
+        user_result = await conn.fetchrow("SELECT * FROM admin WHERE email = $1", email)
         return user_result != None
     except Exception as error:
         print(f'error getting user from db ', error)
@@ -61,7 +60,7 @@ async def add_default_admin(defaultUser: User, dbUrl: str) -> bool:
         
         if (exist_result != None and not exist_result):
             hashed_pw = hash_password(defaultUser.password)
-            await conn.execute('''INSERT INTO admin (email, password) VALUES ($1, $2)''', 
+            await conn.execute("INSERT INTO admin (email, password) VALUES ($1, $2)", 
                            defaultUser.email, 
                            hashed_pw)
             return True
@@ -76,12 +75,18 @@ async def add_default_admin(defaultUser: User, dbUrl: str) -> bool:
         await conn.close()
 
 
-async def test_database(url: str):
+
+async def check_login(user: User) -> bool:
+    """ Check the admin user in the database and compare the password
+    Returns:
+        bool:
+    """
     try: 
-        conn = await asyncpg.connect(url)
-        hashed_pw = hash_password(password="test")
-        await conn.execute('''INSERT INTO admin (email, password) VALUES ($1, $2)''', "test1", hashed_pw)
-        await conn.close()
-   
-    except Exception as error:
-        print(f'error testing the database {error}')
+        found_user = await g.connection.fetch_one("SELECT * FROM admin WHERE email = :email", {"email" : user.email})    
+        logger.info(f'Found user is {found_user}')
+        if (found_user):
+            return check_password(hashed_pw=found_user["password"],raw_pw=user.password)
+        return False
+    except Exception as error: 
+        print(f'error checking login {error}')
+        return False
