@@ -1,4 +1,3 @@
-from asyncio.log import logger
 import asyncpg
 from ..models.types import User
 from quart import g
@@ -83,7 +82,6 @@ async def check_login(user: User) -> bool:
     """
     try: 
         found_user = await g.connection.fetch_one("SELECT * FROM admin WHERE email = :email", {"email" : user.email})    
-        logger.info(f'Found user is {found_user}')
         if (found_user):
             return check_password(hashed_pw=found_user["password"],raw_pw=user.password)
         return False

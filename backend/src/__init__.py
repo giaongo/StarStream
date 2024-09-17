@@ -1,5 +1,4 @@
 from dotenv import find_dotenv, load_dotenv
-from quart_auth import QuartAuth
 from quart_bcrypt import Bcrypt
 from quart_db import QuartDB
 from quart_schema import QuartSchema
@@ -7,6 +6,9 @@ from .models.types import App
 from quart import Quart
 from quart_cors import cors
 import os
+from quart_jwt_extended import (
+    JWTManager
+)
 
 load_dotenv(find_dotenv())
 
@@ -29,9 +31,9 @@ def create_app() -> App:
     Bcrypt(app)
     app.secret_key = os.getenv('APP_SECRET')
     
-    # #QuartAuth setup
-    app.auth_manager = QuartAuth(app)
-    app.config['QUART_AUTH_MODE'] = 'bearer'    
+    # JWT authentication
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+    app.jwt = JWTManager(app)
     
     # register routing blueprints
     from .views.event import event

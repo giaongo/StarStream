@@ -5,4 +5,4 @@ quart-schema
 pdoc3
 quart-bcrypt
 asyncpg
-quart-auth
+quart-jwt-extended
