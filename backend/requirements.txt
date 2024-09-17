@@ -3,3 +3,5 @@ quart-cors
 quart-db[postgresql]
 quart-schema
 pdoc3
+quart-bcrypt
+asyncpg
