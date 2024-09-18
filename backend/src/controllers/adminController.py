@@ -2,6 +2,7 @@ import asyncpg
 from ..models.types import User
 from quart import g
 from quart_bcrypt import check_password_hash, generate_password_hash
+from PIL import Image
 
 def hash_password(password:str) -> str:
     """Hashing raw password
@@ -88,3 +89,30 @@ async def check_login(user: User) -> User|None:
     except Exception as error: 
         print(f'error checking login {error}')
         return None
+    
+    
+def validate_image_extension(filename:str) -> bool:
+    print('validate image extension reaches')
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    if '.' not in filename and filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+        return False
+    return True
+
+
+def store_thumbnail(file, thumbnail_path:str) -> bool:
+    """Create thumbnail of the image
+    Args:
+        file (str)
+        thumbnail_path (str)
+    """
+    size = (500, 500)
+    try:
+        with Image.open(file) as img:
+            img.thumbnail(size)
+            img.save(thumbnail_path)
+        return True
+    except Exception as error:
+        print(f'error saving thumbnail {error}')
+        return False
+    
+        

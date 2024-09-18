@@ -1,9 +1,8 @@
 CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY, 
     title VARCHAR(255) NOT NULL, 
-    event_start_date DATE NOT NULL,
-    event_end_date DATE NOT NULL, 
-    event_time TIME NOT NULL,
+    event_start_date TIMESTAMP NOT NULL,
+    event_end_date TIMESTAMP NOT NULL, 
     event_image VARCHAR(255), 
     streaming_key VARCHAR(100) NOT NULL
 );

@@ -26,7 +26,7 @@ def create_app() -> App:
     QuartSchema(app)
     
     # database setup 
-    QuartDB(app, url=f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgresql:5432/{os.getenv('POSTGRES_DB')}")
+    app.db = QuartDB(app, url=f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgresql:5432/{os.getenv('POSTGRES_DB')}")
     
     # brcypt hashing setup
     Bcrypt(app)

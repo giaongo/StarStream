@@ -2,7 +2,6 @@ import quart_flask_patch
 from src.models.types import User
 from src.controllers.adminController import add_default_admin
 from dotenv import find_dotenv, load_dotenv
-from quart_db import QuartDB
 from src import create_app
 import os
 
@@ -23,7 +22,6 @@ async def check_and_add_admin():
         print('check_and_add_admin result ', result)
     except Exception as error:
         print('Error serving the app ', error) 
-    
-    
+                
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
