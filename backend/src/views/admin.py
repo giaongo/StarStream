@@ -29,10 +29,6 @@ async def profile():
     decoded_user = get_jwt_identity()
     return {'admin': f'current user is {decoded_user}'}, 200
 
-@admin.post('/logout')
-async def logout():
-    return {'admin': 'logout successfully'}, 200
-
 @admin.post('/event')
 async def add_event():
     return {'admin': 'add event successfully'}, 200
