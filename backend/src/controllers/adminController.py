@@ -115,4 +115,19 @@ def store_thumbnail(file, thumbnail_path:str) -> bool:
         print(f'error saving thumbnail {error}')
         return False
     
-        
+async def add_event_to_db(event: dict) -> bool:
+    """Add event to database
+
+    Args:
+        event (dict)
+
+    Returns:
+        bool
+    """
+    try:
+        await g.connection.execute("INSERT INTO events (title, event_start_date, event_end_date, event_image, streaming_key) VALUES (:title, :start_date, :end_date, :event_image, :streaming_key)", 
+                                   event)
+        return True
+    except Exception as error:
+        print(f'error adding event to db {error}')
+        return False
