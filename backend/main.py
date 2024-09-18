@@ -1,3 +1,4 @@
+import quart_flask_patch
 from src.models.types import User
 from src.controllers.adminController import add_default_admin
 from dotenv import find_dotenv, load_dotenv

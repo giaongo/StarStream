@@ -75,16 +75,16 @@ async def add_default_admin(defaultUser: User, dbUrl: str) -> bool:
 
 
 
-async def check_login(user: User) -> bool:
+async def check_login(user: User) -> User|None:
     """ Check the admin user in the database and compare the password
     Returns:
         bool:
     """
     try: 
         found_user = await g.connection.fetch_one("SELECT * FROM admin WHERE email = :email", {"email" : user.email})    
-        if (found_user):
-            return check_password(hashed_pw=found_user["password"],raw_pw=user.password)
-        return False
+        if (found_user and check_password(hashed_pw=found_user["password"],raw_pw=user.password)):
+            return User(email=found_user["email"], password=found_user["password"], id=found_user["id"])
+        return None
     except Exception as error: 
         print(f'error checking login {error}')
-        return False
+        return None
