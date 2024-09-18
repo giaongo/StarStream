@@ -1,3 +1,4 @@
+from datetime import timedelta
 from dotenv import find_dotenv, load_dotenv
 from  ..controllers.adminController import check_login
 from quart import Blueprint, request
@@ -19,16 +20,9 @@ async def login():
             user = {'id': found_user.id, 'email': found_user.email}
             access_token = create_access_token(user)
             return {'msg': f'token {access_token}'}, 200
-    
-    # if result: 
-    #     user = {'email': 'eugine@email.com', 'id': 2}
-    #     # token = current_app.auth_manager.dump_token(user)
-    #     access_token = create_access_token(user)
-    #     return {'message': f'login {result} with token {access_token}'}, 200
-    
-    return {'message': f'failed login'}, 401
+        return {'msg': 'Login failed'}, 401   
+    return {'msg': f'Not validated request'}, 400
 
-   
 @admin.get('/profile')
 @jwt_required
 async def profile():

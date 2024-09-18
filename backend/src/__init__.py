@@ -1,3 +1,4 @@
+from datetime import timedelta
 from dotenv import find_dotenv, load_dotenv
 from quart_bcrypt import Bcrypt
 from quart_db import QuartDB
@@ -33,6 +34,7 @@ def create_app() -> App:
     
     # JWT authentication
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=3)
     app.jwt = JWTManager(app)
     
     # register routing blueprints
