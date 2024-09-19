@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
-from ..controllers.adminController import add_event_to_db, check_login, validate_image_extension, store_thumbnail
+from ..controllers.adminController import add_event_to_db, check_login, delete_event_from_db, validate_image_extension, store_thumbnail
 from quart import Blueprint, request
 from ..models.types import AddEventForm, EventData, LoginForm, User
 from quart_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -62,11 +62,17 @@ async def add_event():
         if not add_event_result:
             return {'msg': 'error adding event to db'}, 400
 
-        return {'msg': 'upload successfully'}, 200
+        return {'msg': f'upload event successfully'}, 200
 
     return {'msg': 'form is not validated'}, 406
 
 
 @admin.delete('/event/<int:event_id>')
+@jwt_required
 async def delete_event(event_id):
+    """delete event
+    """
+    delete_event_result = await delete_event_from_db(event_id)
+    if not delete_event_result:
+        return {'admin': f'error deleting event ${event_id}'}, 400
     return {'admin': f'delete event ${event_id} successfully'}, 200
