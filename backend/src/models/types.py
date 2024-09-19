@@ -50,7 +50,6 @@ class AddEventForm(Form):
     end_date = DateTimeLocalField('End Date', format='%Y-%m-%dT%H:%M', validators=[
         validators.DataRequired(message="End date is required.")
     ])
-    event_image = FileField('Event Image', validators=[
-                            validators.DataRequired(message="Event image is required.")])
+    event_image = FileField('Event Image')
     streaming_key = StringField('Streaming Key', validators=[
                                 validators.DataRequired(message="Streaming key is required.")])

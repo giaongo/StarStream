@@ -10,3 +10,4 @@ quart_flask_patch
 Flask-WTF
 email_validator
 pillow
+pytz
