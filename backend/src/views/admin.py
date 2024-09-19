@@ -2,15 +2,16 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
+from quart import app, current_app
 from ..controllers.adminController import add_event_to_db, check_login, delete_event_from_db, validate_image_extension, store_thumbnail
-from quart import Blueprint, request
+from quart import Blueprint, g, request
 from ..models.types import AddEventForm, EventData, LoginForm, User
 from quart_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 
 admin = Blueprint('admin', __name__)
 load_dotenv(find_dotenv())
-THUMBNAIL_FOLDER = Path().cwd() / 'thumbnails'
+THUMBNAIL_FOLDER = os.path.join(Path().cwd(), 'thumbnails')
 
 
 @admin.post('/login')

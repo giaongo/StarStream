@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS events (
     event_start_date TIMESTAMP NOT NULL,
     event_end_date TIMESTAMP NOT NULL, 
     event_image VARCHAR(255), 
-    streaming_key VARCHAR(100) NOT NULL
+    streaming_key VARCHAR(100) NOT NULL,
+    UNIQUE(streaming_key)
 );
 
 CREATE TABLE IF NOT EXISTS videos_archives (
