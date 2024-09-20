@@ -1,6 +1,6 @@
 from quart import Blueprint
 from quart_jwt_extended import jwt_optional, get_jwt_identity
-from ..controllers.eventController import retrieve_events
+from ..controllers.eventController import retrieve_events_for_today
 event = Blueprint('event', __name__)
 
 
@@ -10,7 +10,7 @@ event = Blueprint('event', __name__)
 @jwt_optional
 async def get_events_today():
     current_user = get_jwt_identity()
-    await retrieve_events()
+    await retrieve_events_for_today()
     if current_user:
         return {'msg': 'request as admin'}, 200
     else:

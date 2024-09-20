@@ -5,7 +5,7 @@ from dotenv import find_dotenv, load_dotenv
 from quart import app, current_app
 from ..controllers.adminController import add_event_to_db, check_login, delete_event_from_db, validate_image_extension, store_thumbnail
 from quart import Blueprint, g, request
-from ..models.types import AddEventForm, EventData, LoginForm, User
+from ..models.types import AddEventForm, EventData, LoginForm, StreamingURLUpdateForm, User
 from quart_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 
@@ -75,5 +75,17 @@ async def delete_event(event_id):
     """
     delete_event_result = await delete_event_from_db(event_id)
     if not delete_event_result:
-        return {'admin': f'error deleting event ${event_id}'}, 400
-    return {'admin': f'delete event ${event_id} successfully'}, 200
+        return {'msg': f'error deleting event ${event_id}'}, 400
+    return {'msg': f'delete event ${event_id} successfully'}, 200
+
+
+@admin.post('/event/streamingurl')
+@jwt_required
+async def edit_streaming_url():
+    """edit streaming url
+    """
+    form = StreamingURLUpdateForm(await request.form)
+    if form.validate():
+        current_app.streaming_url = form.streaming_url.data
+        return {'msg': f'streaming url updated successfully with url {current_app.streaming_url}'}, 200
+    return {'msg': 'invalid streaming url'}, 406

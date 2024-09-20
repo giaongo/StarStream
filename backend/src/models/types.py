@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TypeAlias
 from quart import Quart
-from wtforms import DateTimeLocalField, FileField, Form, PasswordField, StringField, validators
+from wtforms import DateTimeLocalField, FileField, Form, PasswordField, StringField, URLField, validators
 
 
 App: TypeAlias = Quart
@@ -21,7 +21,8 @@ class EventData:
     start_date: datetime
     end_date: datetime
     event_image: str
-    streaming_key: str
+    streaming_key: str | None = None
+    streaming_url: str | None = None
     id: int = 0
 
 
@@ -53,3 +54,10 @@ class AddEventForm(Form):
     event_image = FileField('Event Image')
     streaming_key = StringField('Streaming Key', validators=[
                                 validators.DataRequired(message="Streaming key is required.")])
+
+
+class StreamingURLUpdateForm(Form):
+    """ Streaming form validation
+    """
+    streaming_url = URLField('Streaming URL', validators=[
+        validators.DataRequired(message="Streaming url is required."), validators.URL()])
