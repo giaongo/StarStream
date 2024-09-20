@@ -185,3 +185,21 @@ async def delete_event_from_db(event_id: int) -> bool:
     except Exception as error:
         print(f'error deleting event from db {error}')
         return False
+
+
+async def update_streaming_url(url: str) -> bool:
+    """Update the streaming url
+
+    Args:
+        url (str)
+
+    Returns:
+        bool
+    """
+
+    try:
+        await g.connection.execute("UPDATE streaming_setting SET streaming_url = :url", {"url": url})
+        return True
+    except Exception as error:
+        print(f'error updating streaming url {error}')
+        return False

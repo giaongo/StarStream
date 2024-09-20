@@ -39,8 +39,8 @@ def create_app() -> App:
     app.jwt = JWTManager(app)
 
     # register routing blueprints
-    from .views.event import event
-    from .views.admin import admin
+    from .routes.eventRoute import event
+    from .routes.adminRoute import admin
 
     app.register_blueprint(event, url_prefix='/events')
     app.register_blueprint(admin, url_prefix='/admin')
