@@ -38,9 +38,6 @@ def create_app() -> App:
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=3)
     app.jwt = JWTManager(app)
 
-    # set up streaming url
-    app.streaming_url = os.getenv('STREAMING_URL')
-
     # register routing blueprints
     from .views.event import event
     from .views.admin import admin

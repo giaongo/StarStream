@@ -1,5 +1,6 @@
 import asyncpg
-from ..models.types import User
+from quart import app
+from ..models.types import App, User
 from quart import g
 from quart_bcrypt import check_password_hash, generate_password_hash
 from PIL import Image
@@ -47,33 +48,67 @@ async def admin_exists(email: str, conn: any) -> bool | None:
         return None
 
 
-async def add_default_admin(defaultUser: User, dbUrl: str) -> bool:
-    """Add default admin to databse
+async def data_initial_setup(defaultUser: User, dbUrl: str, app: App) -> bool:
+    """ This function will checks whether the admin account exists in the database or not. If not, add the admin account. 
+    Also, it will fetch the streaming url from the database and set it to the app config.
 
     Args:
-        defaultUser (User)
+        dbUrl (str)
+
     Returns:
-        bool:
+        bool
     """
     conn = await asyncpg.connect(dbUrl)
+
     try:
-        exist_result = await admin_exists(email=defaultUser.email, conn=conn)
-
-        if (exist_result != None and not exist_result):
-            hashed_pw = hash_password(defaultUser.password)
-            await conn.execute("INSERT INTO admin (email, password) VALUES ($1, $2)",
-                               defaultUser.email,
-                               hashed_pw)
-            return True
-        else:
-            print(f'admin exists or error getting admin user')
-            return False
-
+        admin_result = await add_default_admin(defaultUser=defaultUser, conn=conn)
+        streaming_url = await fetch_streaming_url(conn=conn)
     except Exception as error:
-        print(f'error adding user to db {error}')
+        print(f'error initialize data {error}')
         return False
     finally:
         await conn.close()
+        if admin_result and streaming_url:
+            app.config['streaming_url'] = streaming_url
+            return True
+        return False
+
+
+async def add_default_admin(defaultUser: User, conn: any) -> bool:
+    """Start to check whether the default admin exists in the database or not. 
+    If not, add the default admin to the database.
+    Args:
+        defaultUser (User)
+    Returns:
+        bool
+    """
+
+    exist_result = await admin_exists(email=defaultUser.email, conn=conn)
+
+    if (exist_result != None and not exist_result):
+        hashed_pw = hash_password(defaultUser.password)
+        await conn.execute("INSERT INTO admin (email, password) VALUES ($1, $2)",
+                           defaultUser.email,
+                           hashed_pw)
+        return True
+    else:
+        print(f'admin exists or error getting admin user')
+        return False
+
+
+async def fetch_streaming_url(conn: any) -> str | None:
+    """retrieve streaming url from database
+
+    Args:
+        streaming_url (str)
+
+    Returns:
+        bool
+    """
+    url_result = await conn.fetchrow("SELECT * FROM streaming")
+    if url_result:
+        return url_result["streaming_url"]
+    return None
 
 
 async def check_login(user: User) -> User | None:

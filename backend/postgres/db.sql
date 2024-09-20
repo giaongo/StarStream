@@ -21,3 +21,10 @@ CREATE TABLE IF NOT EXISTS admin (
     email VARCHAR(100) NOT NULL, 
     password VARCHAR(100) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS streaming_setting (
+    id SERIAL PRIMARY KEY, 
+    streaming_url VARCHAR(255) NOT NULL
+);
+
+INSERT INTO streaming_setting (streaming_url) VALUES ('rtmp://localhost:1935/live');
