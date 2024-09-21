@@ -63,13 +63,15 @@ async def data_initial_setup(defaultUser: User, dbUrl: str, app: App) -> bool:
     try:
         admin_result = await add_default_admin(defaultUser=defaultUser, conn=conn)
         streaming_url = await fetch_streaming_url(conn=conn)
+
+        if streaming_url:
+            app.streaming_url = streaming_url
     except Exception as error:
         print(f'error initialize data {error}')
         return False
     finally:
         await conn.close()
-        if admin_result and streaming_url:
-            app.config['streaming_url'] = streaming_url
+        if admin_result or streaming_url:
             return True
         return False
 
@@ -105,7 +107,7 @@ async def fetch_streaming_url(conn: any) -> str | None:
     Returns:
         bool
     """
-    url_result = await conn.fetchrow("SELECT * FROM streaming")
+    url_result = await conn.fetchrow("SELECT * FROM streaming_setting")
     if url_result:
         return url_result["streaming_url"]
     return None

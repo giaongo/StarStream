@@ -54,7 +54,7 @@ async def add_event():
         event = EventData(title=form.title.data,
                           start_date=form.start_date.data,
                           end_date=form.end_date.data,
-                          event_image=thumbnail_path,
+                          event_image=secured_name,
                           streaming_key=form.streaming_key.data)
 
         print('event', event.__dict__)

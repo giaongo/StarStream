@@ -28,3 +28,5 @@ CREATE TABLE IF NOT EXISTS streaming_setting (
 );
 
 INSERT INTO streaming_setting (streaming_url) VALUES ('rtmp://localhost:1935/live');
+
+ALTER DATABASE starstream_db SET TIMEZONE TO  'posix/Europe/Helsinki';              
