@@ -1,5 +1,4 @@
 from quart import g
-from datetime import datetime
 from pytz import timezone
 from ..models.types import EventData
 

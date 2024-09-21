@@ -1,5 +1,4 @@
 import asyncpg
-from quart import app
 from ..models.types import App, User
 from quart import g
 from quart_bcrypt import check_password_hash, generate_password_hash
@@ -187,6 +186,21 @@ async def delete_event_from_db(event_id: int) -> bool:
     except Exception as error:
         print(f'error deleting event from db {error}')
         return False
+
+
+async def get_event_filename_by_id(event_id: int) -> str | None:
+    """Get event image filename by id
+    Args:
+        event_id (int)
+    Returns:
+        str | None
+    """
+    try:
+        event = await g.connection.fetch_one("SELECT * FROM events WHERE id = :id", {"id": event_id})
+        return event["event_image"]
+    except Exception as error:
+        print(f'error getting event by id {error}')
+        return None
 
 
 async def update_streaming_url(url: str) -> bool:

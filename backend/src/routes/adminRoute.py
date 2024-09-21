@@ -1,10 +1,9 @@
-from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
-from quart import app, current_app
-from ..controllers.adminController import add_event_to_db, check_login, delete_event_from_db, update_streaming_url, validate_image_extension, store_thumbnail
-from quart import Blueprint, g, request
+from quart import current_app
+from ..controllers.adminController import add_event_to_db, check_login, delete_event_from_db, get_event_filename_by_id, update_streaming_url, validate_image_extension, store_thumbnail
+from quart import Blueprint, request
 from ..models.types import AddEventForm, EventData, LoginForm, StreamingURLUpdateForm, User
 from quart_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
@@ -35,7 +34,6 @@ async def login():
 async def add_event():
     """ add event
     """
-    decoded_user = get_jwt_identity()
     form = AddEventForm(await request.form)
 
     # print('start data', form.start_date.data)
@@ -46,7 +44,8 @@ async def add_event():
         if not validate_image_extension(secured_name):
             return {'msg': 'invalid image extension'}, 406
 
-        thumbnail_path = os.path.join(THUMBNAIL_FOLDER, secured_name)
+        unique_name = f'{form.title.data}_{secured_name}'
+        thumbnail_path = os.path.join(THUMBNAIL_FOLDER, unique_name)
 
         if not store_thumbnail(file, thumbnail_path):
             return {'msg': 'error storing thumbnail'}, 400
@@ -54,7 +53,7 @@ async def add_event():
         event = EventData(title=form.title.data,
                           start_date=form.start_date.data,
                           end_date=form.end_date.data,
-                          event_image=secured_name,
+                          event_image=unique_name,
                           streaming_key=form.streaming_key.data)
 
         print('event', event.__dict__)
@@ -71,12 +70,18 @@ async def add_event():
 @admin.delete('/event/<int:event_id>')
 @jwt_required
 async def delete_event(event_id):
-    """delete event
+    """delete event from db and its associated thumbnail
     """
-    delete_event_result = await delete_event_from_db(event_id)
-    if not delete_event_result:
-        return {'msg': f'error deleting event ${event_id}'}, 400
-    return {'msg': f'delete event ${event_id} successfully'}, 200
+    filename = await get_event_filename_by_id(event_id)
+    if filename:
+        os.remove(os.path.join(THUMBNAIL_FOLDER, filename))
+        delete_event_result = await delete_event_from_db(event_id)
+
+        if not delete_event_result:
+            return {'msg': f'error deleting event ${event_id} from database'}, 400
+
+        return {'msg': f'delete event ${event_id} successfully'}, 200
+    return {'msg': f'event thumbnail not found'}, 404
 
 
 @admin.post('/event/streamingurl')
