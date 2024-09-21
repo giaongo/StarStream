@@ -1,0 +1,10 @@
+Dockerfile
+src/_pycache_
+src/*/_pycache_
+.git
+thumbnails/*
+html/*
+postgres
+postgres/*
+.gitignore
+README.md

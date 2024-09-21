@@ -1,3 +1,13 @@
 quart[dotenv]
 quart-cors
 quart-db[postgresql]
+quart-schema
+pdoc3
+quart-bcrypt
+asyncpg
+quart-jwt-extended
+quart_flask_patch
+Flask-WTF
+email_validator
+pillow
+pytz
