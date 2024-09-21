@@ -1,36 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createTheme, ThemeProvider } from "@mui/material";
+import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
+import AddEventScreen from "./screens/AddEventScreen";
+import VideoArchiveScreen from "./screens/VideoArchiveScreen";
+import ViewingScreen from "./screens/ViewingScreen";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#050960",
+      },
+      secondary: {
+        main: "#E1F7F5",
+      },
+    },
+  });
+
+  theme.typography.h3 = {
+    fontSize: "1.8rem",
+    margin: 20,
+    "@media (min-width:600px)": {
+      fontSize: "2rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "2.4rem",
+    },
+  };
+
+  theme.typography.h6 = {
+    fontSize: "0.8rem",
+    "@media (min-width:600px)": {
+      fontSize: "1rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "1.4rem",
+    },
+  };
+
+  theme.typography.subtitle1 = {
+    color: "text.secondary",
+    marginTop: 5,
+    fontWeight: "lighter",
+    fontSize: "0.4rem",
+    "@media (min-width:600px)": {
+      fontSize: "0.6rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "1rem",
+    },
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-        <p>Hello</p>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <Router>
+        <h1>Hello there</h1>
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/admin/login" element={<LoginScreen />} />
+          <Route path="/admin/addEvent" element={<AddEventScreen />} />
+          <Route path="/videoArchive" element={<VideoArchiveScreen />} />
+          <Route path="/event/:id" element={<ViewingScreen />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
