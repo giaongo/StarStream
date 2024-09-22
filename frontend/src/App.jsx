@@ -5,6 +5,7 @@ import HomeScreen from "./screens/HomeScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import VideoArchiveScreen from "./screens/VideoArchiveScreen";
 import ViewingScreen from "./screens/ViewingScreen";
+import TopAppBar from "./components/TopAppBar";
 
 function App() {
   const theme = createTheme({
@@ -55,12 +56,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <h1>Hello there</h1>
+        <TopAppBar />
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/admin/login" element={<LoginScreen />} />
           <Route path="/admin/addEvent" element={<AddEventScreen />} />
-          <Route path="/videoArchive" element={<VideoArchiveScreen />} />
+          <Route path="/archive" element={<VideoArchiveScreen />} />
           <Route path="/event/:id" element={<ViewingScreen />} />
         </Routes>
       </Router>
