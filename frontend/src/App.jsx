@@ -6,6 +6,7 @@ import AddEventScreen from "./screens/AddEventScreen";
 import VideoArchiveScreen from "./screens/VideoArchiveScreen";
 import ViewingScreen from "./screens/ViewingScreen";
 import TopAppBar from "./components/TopAppBar";
+import MuiCssBaseline from "@mui/material/CssBaseline";
 
 function App() {
   const theme = createTheme({
@@ -16,49 +17,110 @@ function App() {
       secondary: {
         main: "#E1F7F5",
       },
+      nokiaBrand: "#005AFF",
+      white: "#FFFFFF",
+      black: "#000000",
+      deleteBtn: "#F6C7C7",
+      liveBtn: "#BC0000",
+      upcomingBtn: "#8A8A8A",
+      liveBg: "rgba(255, 255, 255, 0.3)",
+      addEventBtn: "#8D92FF",
+    },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: (themeParam) => ({
+          body: {
+            background:
+              "linear-gradient(170deg, rgba(9,6,138,1) 0%, rgba(3,67,163,1) 46%, rgba(0,90,255,1) 75%)",
+            backgroundRepeat: "no-repeat",
+            backgroundAttachment: "fixed",
+          },
+        }),
+      },
     },
   });
 
-  theme.typography.h3 = {
-    fontSize: "1.8rem",
+  theme.typography.h1 = {
+    fontSize: "1.5rem",
+    color: "#FFFFFF",
+    fontFamily: "Iceland, sans-serif",
+    fontWeight: "400",
     margin: 20,
     "@media (min-width:600px)": {
-      fontSize: "2rem",
+      fontSize: "2.75rem",
     },
     [theme.breakpoints.up("md")]: {
-      fontSize: "2.4rem",
+      fontSize: "3rem",
     },
   };
 
-  theme.typography.h6 = {
-    fontSize: "0.8rem",
+  theme.typography.h2 = {
+    fontSize: "1.125rem",
+    color: "#FFFFFF",
+    margin: 20,
     "@media (min-width:600px)": {
-      fontSize: "1rem",
+      fontSize: "1.5rem",
     },
     [theme.breakpoints.up("md")]: {
-      fontSize: "1.4rem",
+      fontSize: "1.875rem",
+    },
+  };
+
+  theme.typography.h3 = {
+    fontSize: "1.125rem",
+    color: "white",
+    "@media (min-width:600px)": {
+      fontSize: "1.25rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "1.5rem",
+    },
+  };
+
+  theme.typography.h4 = {
+    fontSize: "1.125rem",
+    color: "white",
+    margin: 20,
+    "@media (min-width:600px)": {
+      fontSize: "1.125rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "1.125rem",
     },
   };
 
   theme.typography.subtitle1 = {
-    color: "text.secondary",
+    frontSize: "0.6rem",
+    color: "white",
     marginTop: 5,
     fontWeight: "lighter",
-    fontSize: "0.4rem",
     "@media (min-width:600px)": {
-      fontSize: "0.6rem",
+      fontSize: "0.8rem",
     },
     [theme.breakpoints.up("md")]: {
       fontSize: "1rem",
     },
   };
 
+  theme.typography.subtitle2 = {
+    color: "white",
+    marginTop: 5,
+    fontWeight: "lighter",
+    fontSize: "0.6rem",
+    "@media (min-width:600px)": {
+      fontSize: "0.6rem",
+    },
+    [theme.breakpoints.up("md")]: {
+      fontSize: "0.8rem",
+    },
+  };
   return (
     <ThemeProvider theme={theme}>
+      <MuiCssBaseline />
       <Router>
         <TopAppBar />
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
+          <Route path="/" element={<HomeScreen isAdmin={true} />} />
           <Route path="/admin/login" element={<LoginScreen />} />
           <Route path="/admin/addEvent" element={<AddEventScreen />} />
           <Route path="/archive" element={<VideoArchiveScreen />} />

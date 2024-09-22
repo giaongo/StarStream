@@ -65,7 +65,7 @@ const TopAppBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar sx={{ backgroundColor: "#FFFFFF" }}>
+        <Toolbar sx={{ backgroundColor: "white" }}>
           <IconButton
             aria-label="open drawer"
             edge="start"
@@ -75,9 +75,14 @@ const TopAppBar = () => {
             <MenuIcon />
           </IconButton>
           <Typography
-            variant="h5"
+            variant="h2"
             component="div"
-            sx={{ flexGrow: 1, color: "#005AFF", fontWeight: "bold" }}
+            sx={{
+              flexGrow: 1,
+              color: "nokiaBrand",
+              fontWeight: "bold",
+              fontFamily: "Kanit, sans-serif",
+            }}
           >
             Star Stream
           </Typography>
@@ -85,7 +90,7 @@ const TopAppBar = () => {
             {navItems.map((item) => (
               <Button
                 key={item}
-                sx={{ color: "#000000" }}
+                sx={{ color: "black" }}
                 onClick={() => handleClick(item)}
               >
                 {item}
