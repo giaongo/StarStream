@@ -4,16 +4,6 @@ import PropTypes from "prop-types";
 import EventCard from "../components/EventCard";
 import AddIcon from "@mui/icons-material/Add";
 
-const sampleEvents = [
-  {
-    title: "InnoTrans 2024",
-    date: "22/9/2024",
-    time: "12 PM",
-    status: "Active",
-    url: "rtmp://streaming.com",
-    key: "sample key",
-  },
-];
 const HomeScreen = ({ isAdmin }) => {
   return (
     <>

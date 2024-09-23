@@ -7,6 +7,7 @@ import VideoArchiveScreen from "./screens/VideoArchiveScreen";
 import ViewingScreen from "./screens/ViewingScreen";
 import TopAppBar from "./components/TopAppBar";
 import MuiCssBaseline from "@mui/material/CssBaseline";
+import Notification from "./components/Notification";
 
 function App() {
   const theme = createTheme({
@@ -119,6 +120,7 @@ function App() {
       <MuiCssBaseline />
       <Router>
         <TopAppBar />
+        <Notification />
         <Routes>
           <Route path="/" element={<HomeScreen isAdmin={true} />} />
           <Route path="/admin/login" element={<LoginScreen />} />

@@ -8,12 +8,19 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
+import { useAuthentication } from "../hooks/ApiHooks";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { displayNotification } from "../reducers/notificationReducer";
 
 const LoginScreen = () => {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const { loginAdmin } = useAuthentication();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const Card = styled(MuiCard)(({ theme }) => ({
     display: "flex",
@@ -69,7 +76,7 @@ const LoginScreen = () => {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateInputs()) {
       return;
@@ -79,7 +86,25 @@ const LoginScreen = () => {
       email: data.get("email"),
       password: data.get("password"),
     });
+
+    try {
+      const loginResult = await loginAdmin(data);
+      localStorage.setItem("starStreamToken", loginResult.token);
+      dispatch(
+        displayNotification(
+          { message: "Login Successfully", severity: "success" },
+          3000
+        )
+      );
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      dispatch(
+        displayNotification({ message: error.message, severity: "error" }, 3000)
+      );
+    }
   };
+
   return (
     <>
       <SignInContainer direction="column" justifyContent="space-between">
