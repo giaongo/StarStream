@@ -9,13 +9,11 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 
-
 const LoginScreen = () => {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-
 
   const Card = styled(MuiCard)(({ theme }) => ({
     display: "flex",
@@ -31,7 +29,6 @@ const LoginScreen = () => {
     boxShadow:
       "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   }));
-
 
   const SignInContainer = styled(Stack)(({ theme }) => ({
     padding: 20,
@@ -84,10 +81,10 @@ const LoginScreen = () => {
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
-            variant="h4"
-            sx={{ width: "100%" }}
+              variant="h3"
+              sx={{ width: "100%", color: "black", textAlign: "center", margin:0 }}
           >
-            Sign in
+            Admin Login
           </Typography>
           <Box
             component="form"
@@ -119,7 +116,7 @@ const LoginScreen = () => {
               />
             </FormControl>
             <FormControl>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <FormLabel htmlFor="password">Password</FormLabel>
               </Box>
               <TextField
@@ -134,7 +131,7 @@ const LoginScreen = () => {
                 required
                 fullWidth
                 variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
+                color={passwordError ? "error" : "primary"}
               />
             </FormControl>
             <Button
