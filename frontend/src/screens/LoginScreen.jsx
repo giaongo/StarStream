@@ -68,8 +68,12 @@ const LoginScreen = () => {
 
     return isValid;
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
@@ -81,8 +85,13 @@ const LoginScreen = () => {
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
-              variant="h3"
-              sx={{ width: "100%", color: "black", textAlign: "center", margin:0 }}
+            variant="h3"
+            sx={{
+              width: "100%",
+              color: "black",
+              textAlign: "center",
+              margin: 0,
+            }}
           >
             Admin Login
           </Typography>
@@ -134,12 +143,7 @@ const LoginScreen = () => {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Log in
             </Button>
           </Box>
