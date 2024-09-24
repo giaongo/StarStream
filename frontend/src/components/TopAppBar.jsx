@@ -16,13 +16,17 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAndRemoveAdmin } from "../reducers/userReducer";
 
 const drawerWidth = 240;
 
 const TopAppBar = () => {
   const navigate = useNavigate();
-  const navItems = ["Home", "Archive", "Admin Login"];
+  const navItems = ["Home", "Archive", "Admin Login", "Logout"];
   const [mobileOpen, setMobileOpen] = useState(false);
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -39,6 +43,9 @@ const TopAppBar = () => {
       case "Admin Login":
         navigate("/admin/login");
         break;
+      case "Logout":
+        dispatch(logoutAndRemoveAdmin());
+        break;
       default:
         navigate("/");
     }
@@ -51,13 +58,23 @@ const TopAppBar = () => {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} onClick={() => handleClick(item)} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {navItems.map((item) => {
+          if (item === "Admin Login" && user.isAdmin) {
+            return null;
+          } else if (item === "Logout" && !user.isAdmin) {
+            return null;
+          }
+          return (
+            <ListItem key={item} disablePadding>
+              <ListItemButton sx={{ textAlign: "center" }}>
+                <ListItemText
+                  primary={item}
+                  onClick={() => handleClick(item)}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Box>
   );
@@ -90,7 +107,15 @@ const TopAppBar = () => {
             {navItems.map((item) => (
               <Button
                 key={item}
-                sx={{ color: "black" }}
+                sx={{
+                  color: "black",
+                  display:
+                    item === "Admin Login" && user.isAdmin
+                      ? "none"
+                      : item === "Logout" && !user.isAdmin
+                      ? "none"
+                      : "",
+                }}
                 onClick={() => handleClick(item)}
               >
                 {item}

@@ -25,7 +25,12 @@ export const { showNotification, hideNotification } = notificationSlice.actions;
 
 export default notificationSlice.reducer;
 
-// React thunk pattern
+/**
+ * React thunk pattern to display a notification and hide notification after timeout
+ * @param {*} data
+ * @param {*} timeout
+ * @returns
+ */
 export const displayNotification = (data, timeout) => {
   return async (dispatch, _getState) => {
     dispatch(showNotification(data));

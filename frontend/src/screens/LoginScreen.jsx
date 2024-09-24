@@ -50,6 +50,10 @@ const LoginScreen = () => {
     },
   }));
 
+  /**
+   * Validate form inputs
+   * @returns
+   */
   const validateInputs = () => {
     const email = document.getElementById("email");
     const password = document.getElementById("password");
@@ -77,6 +81,11 @@ const LoginScreen = () => {
     return isValid;
   };
 
+  /**
+   * Handle form submission
+   * @param {*} event
+   * @returns
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateInputs()) {
