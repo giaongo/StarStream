@@ -1,4 +1,4 @@
-from quart import Blueprint, current_app, jsonify, send_from_directory
+from quart import Blueprint, current_app, jsonify, request, send_from_directory
 from quart_jwt_extended import jwt_optional, get_jwt_identity
 from .adminRoute import THUMBNAIL_FOLDER
 from ..controllers.eventController import retrieve_events_for_today
@@ -7,7 +7,7 @@ event = Blueprint('event', __name__)
 
 # this routing is partially protected. Can be either admin or public user
 
-@event.route('/', methods=['GET'])
+@event.route('/today', methods=['GET'])
 @jwt_optional
 async def get_events_today():
     current_user = get_jwt_identity()
