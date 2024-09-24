@@ -8,8 +8,13 @@ import ViewingScreen from "./screens/ViewingScreen";
 import TopAppBar from "./components/TopAppBar";
 import MuiCssBaseline from "@mui/material/CssBaseline";
 import Notification from "./components/Notification";
+import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { checkAndSetAdminUser } from "./reducers/userReducer";
 
 function App() {
+  const dispatch = useDispatch();
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -115,6 +120,11 @@ function App() {
       fontSize: "0.8rem",
     },
   };
+
+  useEffect(() => {
+    dispatch(checkAndSetAdminUser());
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <MuiCssBaseline />
@@ -122,7 +132,7 @@ function App() {
         <TopAppBar />
         <Notification />
         <Routes>
-          <Route path="/" element={<HomeScreen isAdmin={true} />} />
+          <Route path="/" element={<HomeScreen />} />
           <Route path="/admin/login" element={<LoginScreen />} />
           <Route path="/admin/addEvent" element={<AddEventScreen />} />
           <Route path="/archive" element={<VideoArchiveScreen />} />

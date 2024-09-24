@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, Container, Fab } from "@mui/material";
-import PropTypes from "prop-types";
 import EventCard from "../components/EventCard";
 import AddIcon from "@mui/icons-material/Add";
+import { useSelector } from "react-redux";
 
-const HomeScreen = ({ isAdmin }) => {
+const HomeScreen = () => {
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {}, []);
+
   return (
     <>
       <Typography variant="h1" textAlign="center">
-        {!isAdmin ? "EVENTS TODAY" : "ADMIN EVENT MONITOR"}
+        {!user.isAdmin ? "EVENTS TODAY" : "ADMIN EVENT MONITOR"}
       </Typography>
       <Container
         sx={{
@@ -17,11 +21,11 @@ const HomeScreen = ({ isAdmin }) => {
           alignItems: "center",
         }}
       >
-        <EventCard isAdmin={true} isLive={true} />
-        <EventCard isAdmin={true} isLive={false} />
-        <EventCard isAdmin={false} isLive={false} />
+        <EventCard isAdmin={user.isAdmin} isLive={true} />
+        <EventCard isAdmin={user.isAdmin} isLive={false} />
+        <EventCard isAdmin={user.isAdmin} isLive={false} />
       </Container>
-      {isAdmin && (
+      {user.isAdmin && (
         <Fab
           color="primary"
           aria-label="add"
@@ -37,10 +41,6 @@ const HomeScreen = ({ isAdmin }) => {
       )}
     </>
   );
-};
-
-HomeScreen.propTypes = {
-  isAdmin: PropTypes.bool,
 };
 
 export default HomeScreen;
