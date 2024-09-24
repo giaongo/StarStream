@@ -28,6 +28,7 @@ function App() {
       black: "#000000",
       deleteBtn: "#F6C7C7",
       liveBtn: "#BC0000",
+      endedBtn: "#4CAF50",
       upcomingBtn: "#8A8A8A",
       liveBg: "rgba(255, 255, 255, 0.3)",
       addEventBtn: "#8D92FF",

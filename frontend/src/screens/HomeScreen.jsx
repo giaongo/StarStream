@@ -33,7 +33,7 @@ const HomeScreen = () => {
 
   return (
     <>
-      <Typography variant="h1" textAlign="center">
+      <Typography variant="h1" textAlign="center" sx={{ marginBottom: "50px" }}>
         {!user.isAdmin ? "EVENTS TODAY" : "ADMIN EVENT MONITOR"}
       </Typography>
       <Container
