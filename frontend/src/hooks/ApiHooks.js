@@ -36,4 +36,32 @@ const useAuthentication = () => {
   return { loginAdmin };
 };
 
-export { useAuthentication };
+const useEvent = () => {
+  const navigate = useNavigate();
+
+  const getEventToday = async (token) => {
+    const options = {
+      method: "GET",
+    };
+
+    if (token) {
+      options.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    try {
+      const events = await doFetch(
+        `${baseUrl}/events/today`,
+        options,
+        navigate
+      );
+      return events;
+    } catch (error) {
+      throw new Error(`getEventTodayError: ${error.message}`);
+    }
+  };
+
+  return { getEventToday };
+};
+export { useAuthentication, useEvent };

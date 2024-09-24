@@ -2,12 +2,34 @@ import React, { useEffect } from "react";
 import { Typography, Container, Fab } from "@mui/material";
 import EventCard from "../components/EventCard";
 import AddIcon from "@mui/icons-material/Add";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEvent } from "../hooks/ApiHooks";
+import { displayNotification } from "../reducers/notificationReducer";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
+  const { getEventToday } = useEvent();
+  const dispatch = useDispatch();
+  const [events, setEvents] = React.useState([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const getEvents = async () => {
+      try {
+        const events = await getEventToday(user.token);
+        setEvents(events.events);
+        return events;
+      } catch (error) {
+        console.error(error);
+        dispatch(
+          displayNotification(
+            { message: error.message, severity: "error" },
+            3000
+          )
+        );
+      }
+    };
+    getEvents();
+  }, [user.isAdmin]);
 
   return (
     <>
@@ -21,9 +43,15 @@ const HomeScreen = () => {
           alignItems: "center",
         }}
       >
-        <EventCard isAdmin={user.isAdmin} isLive={true} />
-        <EventCard isAdmin={user.isAdmin} isLive={false} />
-        <EventCard isAdmin={user.isAdmin} isLive={false} />
+        {events.length === 0 ? (
+          <Typography variant="h2" textAlign="center">
+            No events found!
+          </Typography>
+        ) : (
+          events.map((event) => (
+            <EventCard key={event.id} isLive={true} event={event} />
+          ))
+        )}
       </Container>
       {user.isAdmin && (
         <Fab
