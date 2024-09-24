@@ -12,6 +12,7 @@ import { useAuthentication } from "../hooks/ApiHooks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { displayNotification } from "../reducers/notificationReducer";
+import { checkAndSetAdminUser } from "../reducers/userReducer";
 
 const LoginScreen = () => {
   const [emailError, setEmailError] = React.useState(false);
@@ -96,6 +97,7 @@ const LoginScreen = () => {
           3000
         )
       );
+      dispatch(checkAndSetAdminUser(loginResult.token));
       navigate("/");
     } catch (error) {
       console.error(error);

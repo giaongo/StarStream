@@ -24,9 +24,8 @@ export const { setAdmin } = userSlice.actions;
 export default userSlice.reducer;
 
 // React thunk pattern
-export const checkAndSetAdminUser = () => {
+export const checkAndSetAdminUser = (userToken) => {
   return async (dispatch, _getState) => {
-    const token = localStorage.getItem("starStreamToken");
-    token && dispatch(setAdmin({ token: token, isAdmin: true }));
+    userToken && dispatch(setAdmin({ token: userToken, isAdmin: true }));
   };
 };

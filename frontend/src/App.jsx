@@ -122,7 +122,8 @@ function App() {
   };
 
   useEffect(() => {
-    dispatch(checkAndSetAdminUser());
+    const token = localStorage.getItem("starStreamToken");
+    dispatch(checkAndSetAdminUser(token));
   }, []);
 
   return (
