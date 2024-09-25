@@ -15,6 +15,7 @@ import { EVENT_STATUS } from "../utils/dataTypes";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useEvent } from "../hooks/ApiHooks";
 import { deleteEventById } from "../reducers/eventReducer";
+import { useNavigate } from "react-router-dom";
 
 const EventCard = ({ event }) => {
   const user = useSelector((state) => state.user);
@@ -25,6 +26,7 @@ const EventCard = ({ event }) => {
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
   const { deleteEvent } = useEvent();
+  const navigate = useNavigate();
 
   /**
    * Compare current time with event start and end time. Set event status accordingly
@@ -71,6 +73,24 @@ const EventCard = ({ event }) => {
     intervalRef.current = setInterval(() => {
       checkEventTime();
     }, 1000);
+  };
+
+  /**
+   * Handle status button click
+   */
+  const handleBtnClick = () => {
+    switch (eventStatus) {
+      case EVENT_STATUS["Live"]:
+        console.log("live btn is clicked");
+        navigate(`/event/${event.id}`);
+        break;
+      case EVENT_STATUS["Ended"]:
+        console.log("ended btn is clicked");
+        navigate("/archive");
+        break;
+      default:
+        console.log("Anything else");
+    }
   };
 
   useEffect(() => {
@@ -161,6 +181,7 @@ const EventCard = ({ event }) => {
                   color: "white", // Overrides default disabled text color
                 },
               }}
+              onClick={() => handleBtnClick()}
             >
               {eventStatus === EVENT_STATUS["Upcoming"]
                 ? "Upcoming"
