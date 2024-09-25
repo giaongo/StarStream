@@ -5,12 +5,19 @@ import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
 import { useEvent } from "../hooks/ApiHooks";
 import { displayNotification } from "../reducers/notificationReducer";
+import { useNavigate } from "react-router-dom";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
   const { getEventToday } = useEvent();
   const dispatch = useDispatch();
   const [events, setEvents] = React.useState([]);
+  const navigate = useNavigate();
+
+  const handleFabBtnClick = () => {
+    console.log("Fab button clicked");
+    navigate("admin/addEvent");
+  };
 
   useEffect(() => {
     const getEvents = async () => {
@@ -63,6 +70,7 @@ const HomeScreen = () => {
             right: 20,
             backgroundColor: "addEventBtn",
           }}
+          onClick={() => handleFabBtnClick()}
         >
           <AddIcon />
         </Fab>

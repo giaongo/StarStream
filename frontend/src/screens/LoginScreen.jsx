@@ -5,14 +5,12 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
-import MuiCard from "@mui/material/Card";
 import { useAuthentication } from "../hooks/ApiHooks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { displayNotification } from "../reducers/notificationReducer";
 import { checkAndSetAdminUser } from "../reducers/userReducer";
+import { FormCard, FormContainer } from "../components/FormLayout";
 
 const LoginScreen = () => {
   const [emailError, setEmailError] = React.useState(false);
@@ -22,33 +20,6 @@ const LoginScreen = () => {
   const { loginAdmin } = useAuthentication();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const Card = styled(MuiCard)(({ theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    alignSelf: "center",
-    width: "100%",
-    padding: theme.spacing(4),
-    gap: theme.spacing(2),
-    margin: "auto",
-    [theme.breakpoints.up("sm")]: {
-      maxWidth: "450px",
-    },
-    boxShadow:
-      "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  }));
-
-  const SignInContainer = styled(Stack)(({ theme }) => ({
-    padding: 20,
-    marginTop: "10vh",
-    "&::before": {
-      content: '""',
-      display: "block",
-      position: "absolute",
-      zIndex: -1,
-      inset: 0,
-    },
-  }));
 
   /**
    * Validate form inputs
@@ -118,8 +89,8 @@ const LoginScreen = () => {
 
   return (
     <>
-      <SignInContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
+      <FormContainer direction="column" justifyContent="space-between">
+        <FormCard variant="outlined">
           <Typography
             variant="h3"
             sx={{
@@ -183,8 +154,8 @@ const LoginScreen = () => {
               Log in
             </Button>
           </Box>
-        </Card>
-      </SignInContainer>
+        </FormCard>
+      </FormContainer>
     </>
   );
 };

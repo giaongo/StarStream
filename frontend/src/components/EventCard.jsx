@@ -30,10 +30,7 @@ const EventCard = ({ event }) => {
     const millisecondDiffStart = startDate - currentTime;
     const millisecondDiffEnd = endDate - currentTime;
 
-    console.log("Check Event Time is running for event ", event.title);
-
     if (millisecondDiffStart <= 0 && millisecondDiffEnd > 0) {
-      console.log("Event is live now");
       if (eventStatus !== EVENT_STATUS["Live"]) {
         setEventStatus(EVENT_STATUS["Live"]);
         dispatch(
@@ -44,7 +41,7 @@ const EventCard = ({ event }) => {
         );
       }
     } else if (millisecondDiffEnd <= 0) {
-      console.log("Event has ended");
+      console.log(`Èvent ${event.title} has ended`);
       clearInterval(intervalRef.current);
       setEventStatus(EVENT_STATUS["Ended"]);
     }
