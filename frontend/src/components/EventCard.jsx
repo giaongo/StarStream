@@ -51,12 +51,12 @@ const EventCard = ({ event }) => {
   };
 
   /**
-   * Running checkEventTime in time interval every 1 min
+   * Running checkEventTime in time interval every 1 second
    */
   const setTimeCheckingInterval = () => {
     intervalRef.current = setInterval(() => {
       checkEventTime();
-    }, 60000);
+    }, 1000);
   };
 
   useEffect(() => {
