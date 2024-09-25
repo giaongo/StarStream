@@ -79,6 +79,26 @@ const useEvent = () => {
     }
   };
 
-  return { getEventToday, addEvent };
+  const deleteEvent = async (token, id) => {
+    const options = {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const result = await doFetch(
+        `${baseUrl}/admin/event/${id}`,
+        options,
+        navigate
+      );
+      return result;
+    } catch (error) {
+      throw new Error(`deleteEvent: ${error.message}`);
+    }
+  };
+
+  return { getEventToday, addEvent, deleteEvent };
 };
 export { useAuthentication, useEvent };

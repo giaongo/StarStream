@@ -13,14 +13,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { baseUrl } from "../utils/variables";
 import { EVENT_STATUS } from "../utils/dataTypes";
 import { displayNotification } from "../reducers/notificationReducer";
+import { useEvent } from "../hooks/ApiHooks";
+import { deleteEventById } from "../reducers/eventReducer";
 
 const EventCard = ({ event }) => {
   const user = useSelector((state) => state.user);
   const startDate = new Date(event.start_date);
   const endDate = new Date(event.end_date);
   const intervalRef = useRef(null);
+  const status_stage = useRef(null);
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
+  const { deleteEvent } = useEvent();
 
   /**
    * Compare current time with event start and end time. Set event status accordingly
@@ -30,8 +34,25 @@ const EventCard = ({ event }) => {
     const millisecondDiffStart = startDate - currentTime;
     const millisecondDiffEnd = endDate - currentTime;
 
-    if (millisecondDiffStart <= 0 && millisecondDiffEnd > 0) {
-      if (eventStatus !== EVENT_STATUS["Live"]) {
+    if (millisecondDiffEnd <= 0) {
+      console.log(`Event ${event.title} has ended`);
+      clearInterval(intervalRef.current);
+      if (
+        !status_stage.current ||
+        status_stage.current !== EVENT_STATUS["Ended"]
+      ) {
+        status_stage.current = EVENT_STATUS["Ended"];
+        setEventStatus(EVENT_STATUS["Ended"]);
+        dispatch(
+          displayNotification(
+            { message: `${event.title} ends live`, severity: "info" },
+            3000
+          )
+        );
+      }
+    } else if (millisecondDiffStart <= 0 && millisecondDiffEnd > 0) {
+      if (!status_stage.current) {
+        status_stage.current = EVENT_STATUS["Live"];
         setEventStatus(EVENT_STATUS["Live"]);
         dispatch(
           displayNotification(
@@ -40,10 +61,6 @@ const EventCard = ({ event }) => {
           )
         );
       }
-    } else if (millisecondDiffEnd <= 0) {
-      console.log(`Èvent ${event.title} has ended`);
-      clearInterval(intervalRef.current);
-      setEventStatus(EVENT_STATUS["Ended"]);
     }
   };
 
@@ -64,6 +81,7 @@ const EventCard = ({ event }) => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
+        status_stage.current = null;
       }
     };
   }, []);
@@ -161,6 +179,9 @@ const EventCard = ({ event }) => {
                   color: "black",
                   marginTop: "10px",
                 }}
+                onClick={() =>
+                  dispatch(deleteEventById(user.token, event.id, deleteEvent))
+                }
               >
                 {" "}
                 Delete

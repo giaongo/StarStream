@@ -6,13 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEvent } from "../hooks/ApiHooks";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useNavigate } from "react-router-dom";
+import { addEvents } from "../reducers/eventReducer";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
   const { getEventToday } = useEvent();
   const dispatch = useDispatch();
-  const [events, setEvents] = React.useState([]);
   const navigate = useNavigate();
+  const eventState = useSelector((state) => state.event);
 
   const handleFabBtnClick = () => {
     console.log("Fab button clicked");
@@ -23,7 +24,7 @@ const HomeScreen = () => {
     const getEvents = async () => {
       try {
         const events = await getEventToday(user.token);
-        setEvents(events.events);
+        dispatch(addEvents(events));
         return events;
       } catch (error) {
         console.error(error);
@@ -50,12 +51,12 @@ const HomeScreen = () => {
           alignItems: "center",
         }}
       >
-        {events.length === 0 ? (
+        {eventState.length === 0 ? (
           <Typography variant="h2" textAlign="center">
             No events found!
           </Typography>
         ) : (
-          events.map((event) => (
+          eventState.map((event) => (
             <EventCard key={event.id} isLive={true} event={event} />
           ))
         )}

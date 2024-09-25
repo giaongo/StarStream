@@ -5,11 +5,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import notificationReducer from "./reducers/notificationReducer.js";
 import { Provider } from "react-redux";
 import userReducer from "./reducers/userReducer.js";
+import eventReducer from "./reducers/eventReducer.js";
 
 const store = configureStore({
   reducer: {
     notification: notificationReducer,
     user: userReducer,
+    event: eventReducer,
   },
 });
 
