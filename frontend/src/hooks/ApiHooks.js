@@ -62,6 +62,23 @@ const useEvent = () => {
     }
   };
 
-  return { getEventToday };
+  const addEvent = async (token, data) => {
+    const options = {
+      method: "POST",
+      body: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const result = await doFetch(`${baseUrl}/admin/event`, options, navigate);
+      return result;
+    } catch (error) {
+      throw new Error(`addEvent: ${error.message}`);
+    }
+  };
+
+  return { getEventToday, addEvent };
 };
 export { useAuthentication, useEvent };

@@ -63,10 +63,6 @@ const LoginScreen = () => {
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
 
     try {
       const loginResult = await loginAdmin(data);
