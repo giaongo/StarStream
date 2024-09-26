@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import VideoJS from "../components/VideoJS";
-import { Typography, Container } from "@mui/material";
+import { Typography, Container, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
 const ViewingScreen = () => {
@@ -36,12 +36,23 @@ const ViewingScreen = () => {
   };
 
   return (
-    <Container>
-      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+    <Box
+      component="section"
+      sx={{
+        display: "flex",
+        justifyContent: "space-evenly",
+        marginTop: "20px",
+      }}
+    >
       <Typography variant="h2" sx={{ marginTop: "10px" }}>
         {event.title}
       </Typography>
-    </Container>
+      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+
+      <Typography variant="h2" sx={{ marginTop: "10px" }}>
+        Live Chat
+      </Typography>
+    </Box>
   );
 };
 

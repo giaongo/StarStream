@@ -46,8 +46,7 @@ const VideoJS = (props) => {
     <Box
       data-vjs-player
       sx={{
-        width: "100%",
-        margin: "20px auto",
+        width: "60%",
         boxShadow: 3,
       }}
     >
