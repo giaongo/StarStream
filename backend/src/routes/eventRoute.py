@@ -1,7 +1,8 @@
-from quart import Blueprint, current_app, jsonify, request, send_from_directory
+from quart import Blueprint, current_app, send_from_directory
 from quart_jwt_extended import jwt_optional, get_jwt_identity
 from .adminRoute import THUMBNAIL_FOLDER
-from ..controllers.eventController import retrieve_events_for_today
+from ..controllers.eventController import get_viewing_url, retrieve_events_for_today
+
 event = Blueprint('event', __name__)
 
 
@@ -31,3 +32,12 @@ async def get_archives():
 @event.get('/thumbnail/<string:filename>')
 async def serve_thumbnail(filename: str):
     return await send_from_directory(THUMBNAIL_FOLDER, filename)
+
+
+@event.get('/viewing/<int:event_id>')
+async def getViewingUrlByEventId(event_id):
+    viewing_url = await get_viewing_url(event_id=event_id, app=current_app)
+
+    if not viewing_url:
+        return {'msg': 'Viewing url not found'}, 404
+    return {'url': viewing_url}, 200

@@ -1,6 +1,6 @@
 from quart import g
 from pytz import timezone
-from ..models.types import EventData
+from ..models.types import App, EventData
 
 
 async def retrieve_events_for_today(isAdmin: bool, streaming_url: str) -> list[dict] | None:
@@ -34,4 +34,38 @@ async def retrieve_events_for_today(isAdmin: bool, streaming_url: str) -> list[d
         return None
     except Exception as error:
         print(f'Error retrieving events for today {error}')
+        return None
+
+
+async def get_streaming_key(event_id: int) -> str | None:
+    """ Retrieve streaming key from database
+
+    Args:
+        event_id (int)
+
+    Returns:
+        str | None
+    """
+    try:
+        result = await g.connection.fetch_one("SELECT streaming_key FROM events WHERE id = :id", {"id": event_id})
+        return result["streaming_key"]
+    except Exception as error:
+        print(f'Error getting streaming key {error}')
+        return None
+
+
+async def get_viewing_url(event_id: int, app: App) -> str | None:
+    """ generate viewing url from streaming url and streaming key
+
+    Args:
+        event_id (int)
+
+    Returns:
+        str | None
+    """
+    key = await get_streaming_key(event_id)
+    url = app.streaming_url
+    if (key and url):
+        return f'http://{url}/hls/{key}.m3u8'
+    else:
         return None
