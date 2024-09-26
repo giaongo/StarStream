@@ -1,16 +1,19 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import VideoJS from "../components/VideoJS";
 import { Typography, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import "../styles/App.css";
+import videojs from "video.js";
 
 const ViewingScreen = () => {
   const playerRef = useRef(null);
   const location = useLocation();
   const event = location.state?.event;
+  const viewing_url = location.state?.viewing_url.url;
   const startDate = new Date(event.start_date);
   const endDate = new Date(event.end_date);
 
+  // TODO: replace the src with the viewing_url
   const videoJsOptions = {
     autoplay: true,
     controls: true,

@@ -25,7 +25,7 @@ const EventCard = ({ event }) => {
   const statusStageRef = useRef(null);
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
-  const { deleteEvent } = useEvent();
+  const { deleteEvent, getViewingUrl } = useEvent();
   const navigate = useNavigate();
 
   /**
@@ -78,11 +78,20 @@ const EventCard = ({ event }) => {
   /**
    * Handle status button click
    */
-  const handleBtnClick = () => {
+  const handleBtnClick = async () => {
     switch (eventStatus) {
       case EVENT_STATUS["Live"]:
-        console.log("live btn is clicked");
-        navigate(`/event/${event.id}`, { state: { event } });
+        let viewing_url = "";
+        if (user.isAdmin) {
+          viewing_url = `http://${event.streaming_url}/hls/${event.streaming_key}.m3u8`;
+        } else {
+          try {
+            viewing_url = await getViewingUrl(event.id);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        navigate(`/event/${event.id}`, { state: { event, viewing_url } });
         break;
       case EVENT_STATUS["Ended"]:
         console.log("ended btn is clicked");
@@ -151,7 +160,7 @@ const EventCard = ({ event }) => {
           {user.isAdmin && (
             <>
               <Typography variant="subtitle2" component="div">
-                Streaming status:{" "}
+                <b>Streaming status:</b>{" "}
                 {eventStatus === EVENT_STATUS["Upcoming"]
                   ? "Upcoming"
                   : eventStatus === EVENT_STATUS["Live"]
@@ -159,10 +168,10 @@ const EventCard = ({ event }) => {
                   : "Ended"}
               </Typography>
               <Typography variant="subtitle2" component="div">
-                Streaming url: {event.streaming_url}
+                <b>Streaming url:</b> rtmp://{event.streaming_url}/stream
               </Typography>
               <Typography variant="subtitle2" component="div">
-                Streaming key: {event.streaming_key}
+                <b>Streaming key:</b> {event.streaming_key}
               </Typography>
             </>
           )}
@@ -183,7 +192,7 @@ const EventCard = ({ event }) => {
                   color: "white", // Overrides default disabled text color
                 },
               }}
-              onClick={() => handleBtnClick()}
+              onClick={async () => await handleBtnClick()}
             >
               {eventStatus === EVENT_STATUS["Upcoming"]
                 ? "Upcoming"

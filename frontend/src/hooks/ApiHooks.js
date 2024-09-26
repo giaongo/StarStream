@@ -3,7 +3,7 @@ import { baseUrl } from "../utils/variables";
 import { useNavigate } from "react-router-dom";
 import { logoutAndRemoveAdmin } from "../reducers/userReducer";
 
-const doFetch = async (url, options, navigate) => {
+const doFetch = async (url, options, navigate, dispatch) => {
   const response = await fetch(url, options);
   const json = await response.json();
 
@@ -113,6 +113,19 @@ const useEvent = () => {
     }
   };
 
-  return { getEventToday, addEvent, deleteEvent };
+  const getViewingUrl = async (id) => {
+    try {
+      const result = await doFetch(
+        `${baseUrl}/events/viewing/${id}`,
+        navigate,
+        dispatch
+      );
+      return result;
+    } catch (error) {
+      throw new Error(`getViewingUrl: ${error.message}`);
+    }
+  };
+
+  return { getEventToday, addEvent, deleteEvent, getViewingUrl };
 };
 export { useAuthentication, useEvent };
