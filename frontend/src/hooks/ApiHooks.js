@@ -1,5 +1,7 @@
+import { useDispatch } from "react-redux";
 import { baseUrl } from "../utils/variables";
 import { useNavigate } from "react-router-dom";
+import { logoutAndRemoveAdmin } from "../reducers/userReducer";
 
 const doFetch = async (url, options, navigate) => {
   const response = await fetch(url, options);
@@ -8,6 +10,7 @@ const doFetch = async (url, options, navigate) => {
   if (!response.ok) {
     if (response.status === 401) {
       navigate("/admin/login");
+      dispatch(logoutAndRemoveAdmin());
     }
     throw new Error(json.msg);
   }
@@ -16,6 +19,8 @@ const doFetch = async (url, options, navigate) => {
 
 const useAuthentication = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const loginAdmin = async (credentials) => {
     const options = {
       method: "POST",
@@ -25,7 +30,8 @@ const useAuthentication = () => {
       const loginResult = await doFetch(
         `${baseUrl}/admin/login`,
         options,
-        navigate
+        navigate,
+        dispatch
       );
       return loginResult;
     } catch (error) {
@@ -38,6 +44,7 @@ const useAuthentication = () => {
 
 const useEvent = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const getEventToday = async (token) => {
     const options = {
@@ -54,7 +61,8 @@ const useEvent = () => {
       const events = await doFetch(
         `${baseUrl}/events/today`,
         options,
-        navigate
+        navigate,
+        dispatch
       );
       return events;
     } catch (error) {
@@ -72,7 +80,12 @@ const useEvent = () => {
     };
 
     try {
-      const result = await doFetch(`${baseUrl}/admin/event`, options, navigate);
+      const result = await doFetch(
+        `${baseUrl}/admin/event`,
+        options,
+        navigate,
+        dispatch
+      );
       return result;
     } catch (error) {
       throw new Error(`addEvent: ${error.message}`);
@@ -91,7 +104,8 @@ const useEvent = () => {
       const result = await doFetch(
         `${baseUrl}/admin/event/${id}`,
         options,
-        navigate
+        navigate,
+        dispatch
       );
       return result;
     } catch (error) {

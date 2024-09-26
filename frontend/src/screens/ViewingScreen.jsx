@@ -1,13 +1,15 @@
 import React, { useRef } from "react";
 import VideoJS from "../components/VideoJS";
-import { Typography, Container, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import "../styles/App.css"
+import "../styles/App.css";
 
 const ViewingScreen = () => {
   const playerRef = useRef(null);
   const location = useLocation();
   const event = location.state?.event;
+  const startDate = new Date(event.start_date);
+  const endDate = new Date(event.end_date);
 
   const videoJsOptions = {
     autoplay: true,
@@ -42,7 +44,7 @@ const ViewingScreen = () => {
         component="section"
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          flexDirection: { xs: "column", sm: "row" },
           margin: "20px",
         }}
       >
@@ -51,23 +53,35 @@ const ViewingScreen = () => {
           sx={{
             boxShadow: 3,
             flexGrow: 1,
-            flexBasis: "45%",
+            flexBasis: { xs: "80%", sm: "45%" },
           }}
         >
           <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
-          <button className="test">Test</button>
         </Box>
 
-        <Box sx={{ flexGrow: 1, backgroundColor: "black", marginLeft: "10px" }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            backgroundColor: "black",
+            marginLeft: { xs: "0px", sm: "20px" },
+            marginTop: { xs: "10px", sm: "0px" },
+          }}
+        >
           <Typography variant="h2" sx={{ marginTop: "10px" }}>
             Live Chat
           </Typography>
           {/* This area allocates for chatbox component */}
         </Box>
       </Box>
-      <Typography variant="h2" sx={{ margin: "30px" }}>
-        {event.title}
-      </Typography>
+      <Box sx={{ marginLeft: "20px" }}>
+        <Typography variant="h2" margin="0px">
+          {event.title}
+        </Typography>
+        <Typography variant="subtitle1" component="div" display="inline">
+          <b>From:</b> {startDate.toLocaleTimeString()} - <b>To: </b>{" "}
+          {endDate.toLocaleTimeString()}
+        </Typography>
+      </Box>
     </>
   );
 };
