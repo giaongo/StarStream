@@ -22,7 +22,7 @@ const EventCard = ({ event }) => {
   const startDate = new Date(event.start_date);
   const endDate = new Date(event.end_date);
   const intervalRef = useRef(null);
-  const status_stage = useRef(null);
+  const statusStageRef = useRef(null);
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
   const { deleteEvent } = useEvent();
@@ -40,10 +40,10 @@ const EventCard = ({ event }) => {
       console.log(`Event ${event.title} has ended`);
       clearInterval(intervalRef.current);
       if (
-        !status_stage.current ||
-        status_stage.current !== EVENT_STATUS["Ended"]
+        !statusStageRef.current ||
+        statusStageRef.current !== EVENT_STATUS["Ended"]
       ) {
-        status_stage.current = EVENT_STATUS["Ended"];
+        statusStageRef.current = EVENT_STATUS["Ended"];
         setEventStatus(EVENT_STATUS["Ended"]);
         dispatch(
           displayNotification(
@@ -53,8 +53,8 @@ const EventCard = ({ event }) => {
         );
       }
     } else if (millisecondDiffStart <= 0 && millisecondDiffEnd > 0) {
-      if (!status_stage.current) {
-        status_stage.current = EVENT_STATUS["Live"];
+      if (!statusStageRef.current) {
+        statusStageRef.current = EVENT_STATUS["Live"];
         setEventStatus(EVENT_STATUS["Live"]);
         dispatch(
           displayNotification(
@@ -82,7 +82,7 @@ const EventCard = ({ event }) => {
     switch (eventStatus) {
       case EVENT_STATUS["Live"]:
         console.log("live btn is clicked");
-        navigate(`/event/${event.id}`);
+        navigate(`/event/${event.id}`, { state: { event } });
         break;
       case EVENT_STATUS["Ended"]:
         console.log("ended btn is clicked");
@@ -96,12 +96,14 @@ const EventCard = ({ event }) => {
   useEffect(() => {
     setTimeCheckingInterval();
 
+    // clean up when component unmounts
     return () => {
-      console.log("event card component is unmounted");
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
-        status_stage.current = null;
+      }
+      if (statusStageRef.current) {
+        statusStageRef.current = null;
       }
     };
   }, []);
