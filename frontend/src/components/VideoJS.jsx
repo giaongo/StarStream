@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import "../styles/App.css"
 
 const VideoJS = (props) => {
   const videoRef = useRef(null);
@@ -45,12 +46,8 @@ const VideoJS = (props) => {
   return (
     <Box
       data-vjs-player
-      sx={{
-        width: "60%",
-        boxShadow: 3,
-      }}
     >
-      <Box ref={videoRef} />
+      <Box ref={videoRef}/>
     </Box>
   );
 };

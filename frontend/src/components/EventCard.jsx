@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import "../styles/Home.css";
+import "../styles/App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { baseUrl } from "../utils/variables";
 import { EVENT_STATUS } from "../utils/dataTypes";

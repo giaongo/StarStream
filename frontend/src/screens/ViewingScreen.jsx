@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import VideoJS from "../components/VideoJS";
 import { Typography, Container, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
+import "../styles/App.css"
 
 const ViewingScreen = () => {
   const playerRef = useRef(null);
@@ -36,23 +37,38 @@ const ViewingScreen = () => {
   };
 
   return (
-    <Box
-      component="section"
-      sx={{
-        display: "flex",
-        justifyContent: "space-evenly",
-        marginTop: "20px",
-      }}
-    >
-      <Typography variant="h2" sx={{ marginTop: "10px" }}>
+    <>
+      <Box
+        component="section"
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          margin: "20px",
+        }}
+      >
+        <Box
+          className="videoContainer"
+          sx={{
+            boxShadow: 3,
+            flexGrow: 1,
+            flexBasis: "45%",
+          }}
+        >
+          <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+          <button className="test">Test</button>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, backgroundColor: "black", marginLeft: "10px" }}>
+          <Typography variant="h2" sx={{ marginTop: "10px" }}>
+            Live Chat
+          </Typography>
+          {/* This area allocates for chatbox component */}
+        </Box>
+      </Box>
+      <Typography variant="h2" sx={{ margin: "30px" }}>
         {event.title}
       </Typography>
-      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
-
-      <Typography variant="h2" sx={{ marginTop: "10px" }}>
-        Live Chat
-      </Typography>
-    </Box>
+    </>
   );
 };
 
