@@ -7,6 +7,7 @@ import { useEvent } from "../hooks/ApiHooks";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useNavigate } from "react-router-dom";
 import { addEvents } from "../reducers/eventReducer";
+import Chat from "../components/Chat";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
@@ -21,6 +22,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
+    console.log("Use effect in HomeScreen is called");
     const getEvents = async () => {
       try {
         const events = await getEventToday(user.token);
@@ -37,7 +39,7 @@ const HomeScreen = () => {
       }
     };
     getEvents();
-  }, [user.isAdmin]);
+  }, []);
 
   return (
     <>

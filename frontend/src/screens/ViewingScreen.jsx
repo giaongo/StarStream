@@ -4,6 +4,7 @@ import { Typography, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import "../styles/App.css";
 import videojs from "video.js";
+import Chat from "../components/Chat";
 
 const ViewingScreen = () => {
   const playerRef = useRef(null);
@@ -74,6 +75,7 @@ const ViewingScreen = () => {
             Live Chat
           </Typography>
           {/* This area allocates for chatbox component */}
+          <Chat />
         </Box>
       </Box>
       <Box sx={{ marginLeft: "20px" }}>
