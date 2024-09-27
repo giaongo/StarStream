@@ -1,5 +1,7 @@
 from quart import g
 from pytz import timezone
+
+from src import QuartSIO
 from ..models.types import App, EventData
 
 
@@ -54,7 +56,7 @@ async def get_streaming_key(event_id: int) -> str | None:
         return None
 
 
-async def get_viewing_url(event_id: int, app: App) -> str | None:
+async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
     """ generate viewing url from streaming url and streaming key
 
     Args:

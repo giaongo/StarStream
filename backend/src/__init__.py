@@ -1,8 +1,11 @@
+import asyncio
 from datetime import timedelta
 from dotenv import find_dotenv, load_dotenv
 from quart_bcrypt import Bcrypt
 from quart_db import QuartDB
 from quart_schema import QuartSchema
+import socketio
+import uvicorn
 from .models.types import App
 from quart import Quart
 from quart_cors import cors
@@ -45,3 +48,38 @@ def create_app() -> App:
     app.register_blueprint(event, url_prefix='/events')
     app.register_blueprint(admin, url_prefix='/admin')
     return app
+
+
+class QuartSIO:
+    _instance = None
+
+    def __init__(self, app: App) -> None:
+        self._sio = socketio.AsyncServer(
+            async_mode="asgi", cors_allowed_origins="*"
+        )
+        self._quart_app = app
+        self._sio_app = socketio.ASGIApp(self._sio, self._quart_app)
+        self.route = self._quart_app.route
+        self.event = self._sio.event
+        self.emit = self._sio.emit
+        self.before_serving = self._quart_app.before_serving
+        self.streaming_url = ""
+
+    async def _run(self, host: str, port: int):
+        try:
+            uvconfig = uvicorn.Config(self._sio_app, host=host, port=port)
+            server = uvicorn.Server(config=uvconfig)
+            await server.serve()
+        except KeyboardInterrupt:
+            print("Shutting down")
+        finally:
+            print("Bye!")
+
+    def run(self, host: str, port: int):
+        asyncio.run(self._run(host, port))
+
+    @classmethod
+    def get_instance(self):
+        if self._instance is None:
+            self._instance = QuartSIO(app=create_app())
+        return self._instance
