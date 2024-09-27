@@ -1,12 +1,16 @@
 import quart_flask_patch
+from quart import websocket
+import asyncio
+from src.models.broker import Broker
 from src.models.types import User
-from src.controllers.adminController import add_default_admin, data_initial_setup
+from src.controllers.adminController import data_initial_setup
+from src.controllers.chatController import _receive
 from dotenv import find_dotenv, load_dotenv
 from src import create_app
 import os
-from quart_db import QuartDB
 
 app = create_app()
+broker = Broker()
 load_dotenv(find_dotenv())
 
 
@@ -26,6 +30,22 @@ async def initial_setup():
 
     except Exception as error:
         print('Error serving the app ', error)
+
+
+@app.websocket('/ws')
+async def ws():
+    print('Websocket connection established')
+    try:
+        task = asyncio.ensure_future(_receive(broker=broker))
+
+        async for message in broker.subscribe():
+            print(f"Sending message: {message}")
+            await websocket.send(message)
+    except Exception as error:
+        print('Error serving the app ', error)
+    finally:
+        task.cancel()
+        await task
 
 
 if __name__ == '__main__':
