@@ -1,58 +1,62 @@
-import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import React, { useEffect, useState, useRef } from "react";
+import socket from "socket.io-client";
+import PropTypes from "prop-types";
 
-const Chat = () => {
-  const [messages, setMessages] = useState([]);
-  const socket = io("ws://localhost:5001");
-  const [input, setInput] = useState("");
+const Chat = ({ eventId }) => {
+  const [chats, setChats] = useState([]);
+  const [message, setMessage] = useState("");
+  const socketClientRef = useRef();
+  const client = socket("http://localhost:5001", { autoConnect: false });
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to server");
-    });
+    client.connect();
+    client.emit("join", eventId);
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from server");
+    client.on("connect", () => {
+      console.log("connected");
     });
-
-    socket.on("message", (data) => {
-      console.log(data);
-      setMessages((prevMessages) => [...prevMessages, data]);
+    client.on("disconnect", () => {
+      console.log("diconnected");
     });
+    client.on("message", (message) => {
+      console.log("received_message", message);
+      setChats((prevChats) => [...prevChats, message]);
+    });
+    socketClientRef.current = client;
 
     return () => {
-      console.log("Disconnecting from server");
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("message");
+      client.emit("leave", eventId);
+      client.removeAllListeners();
+      client.disconnect();
     };
   }, []);
 
-  const sendMessage = () => {
-    if (input.trim() && socket) {
-      socket.send(JSON.stringify({ message: input }));
-      setInput("");
-    }
+  const handleSend = async () => {
+    socketClientRef.current.emit("message", {
+      room: eventId,
+      message,
+    });
+    setMessage("");
   };
-
   return (
     <div>
       <div>
-        {messages.map((msg, index) => (
-          <div key={index} style={{ color: "white" }}>
-            {msg}
+        <h1>Messages</h1>
+        {chats.map((chat, id) => (
+          <div style={{ color: "white" }} key={id}>
+            {chat.message}
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-      />
-      <button onClick={sendMessage}>Send</button>
+      <div>
+        <input value={message} onChange={(e) => setMessage(e.target.value)} />
+        <button onClick={handleSend}>Send</button>
+      </div>
     </div>
   );
 };
 
+Chat.propTypes = {
+  eventId: PropTypes.number,
+};
 export default Chat;

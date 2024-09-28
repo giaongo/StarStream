@@ -64,6 +64,8 @@ class QuartSIO:
         self.emit = self._sio.emit
         self.before_serving = self._quart_app.before_serving
         self.streaming_url = ""
+        self.enter_room = self._sio.enter_room
+        self.leave_room = self._sio.leave_room
 
     async def _run(self, host: str, port: int):
         try:

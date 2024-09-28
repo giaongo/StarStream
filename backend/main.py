@@ -1,5 +1,4 @@
 import quart_flask_patch
-from quart import websocket
 from src.models.broker import Broker
 from src.models.types import User
 from src.controllers.adminController import data_initial_setup
@@ -31,37 +30,32 @@ async def initial_setup():
         print('Error serving the app ', error)
 
 
-# @app.websocket('/ws')
-# async def ws():
-#     print('Websocket connection established')
-#     try:
-#         task = asyncio.ensure_future(_receive(broker=broker))
-
-#         async for message in broker.subscribe():
-#             print(f"Sending message: {message}")
-#             await websocket.send(message)
-#     except Exception as error:
-#         print('Error serving the app ', error)
-#     finally:
-#         task.cancel()
-#         await task
-
-
 @app.event
 async def connect(sid, environ):
-    print("Connected")
+    print('Connected')
 
 
 @app.event
 async def disconnect(sid):
-    print("Disconnected")
+    print('Disconnected')
 
 
 @app.event
 async def message(sid, data):
-    print("Message:", data)
-    await app.emit("message", data)
+    print('Message:', data)
+    await app.emit('message', data, room=data['room'])
+
+
+@app.event
+async def join(sid, event_id):
+    print('Entering room', event_id)
+    await app.enter_room(sid, event_id)
+
+
+@app.event
+async def leave(sid, event_id):
+    print('Exiting room', event_id)
+    await app.leave_room(sid, event_id)
 
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=5001)
     app.run('0.0.0.0', 5001)

@@ -75,7 +75,7 @@ const ViewingScreen = () => {
             Live Chat
           </Typography>
           {/* This area allocates for chatbox component */}
-          <Chat />
+          <Chat eventId={event.id} />
         </Box>
       </Box>
       <Box sx={{ marginLeft: "20px" }}>
