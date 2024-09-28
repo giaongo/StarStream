@@ -8,9 +8,9 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import React, { useState } from "react";
-import { FormContainer, FormCard } from "../components/FormLayout";
+import { FormContainer, FormCard } from "../styles/CustomMaterialStyles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { VisuallyHiddenInput } from "../components/FormLayout";
+import { VisuallyHiddenInput } from "../styles/CustomMaterialStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { useEvent } from "../hooks/ApiHooks";
 import { useNavigate } from "react-router-dom";

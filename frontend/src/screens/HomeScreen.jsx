@@ -7,7 +7,6 @@ import { useEvent } from "../hooks/ApiHooks";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useNavigate } from "react-router-dom";
 import { addEvents } from "../reducers/eventReducer";
-import Chat from "../components/Chat";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);

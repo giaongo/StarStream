@@ -3,3 +3,9 @@
     flex-direction: column;
     justify-content: center;
 }
+
+.video-js {
+    border-radius: 5px !important;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
+

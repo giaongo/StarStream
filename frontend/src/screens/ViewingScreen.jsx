@@ -70,6 +70,8 @@ const ViewingScreen = () => {
             marginLeft: { xs: "0px", sm: "20px" },
             marginTop: { xs: "10px", sm: "0px" },
             flexBasis: { xs: "100%", sm: "5%" },
+            backgroundColor: "black",
+            boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.2)",
           }}
         >
           <Typography variant="h2" sx={{ marginTop: "10px" }}>
