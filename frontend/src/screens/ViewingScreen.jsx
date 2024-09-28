@@ -43,13 +43,14 @@ const ViewingScreen = () => {
   };
 
   return (
-    <>
+    <Box sx={{ height: "100vh" }}>
       <Box
         component="section"
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          margin: "20px",
+          margin: "1.1%",
+          marginBottom: "10px",
         }}
       >
         <Box
@@ -57,7 +58,7 @@ const ViewingScreen = () => {
           sx={{
             boxShadow: 3,
             flexGrow: 1,
-            flexBasis: { xs: "80%", sm: "45%" },
+            flexBasis: "48%",
           }}
         >
           <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
@@ -66,9 +67,9 @@ const ViewingScreen = () => {
         <Box
           sx={{
             flexGrow: 1,
-            backgroundColor: "black",
             marginLeft: { xs: "0px", sm: "20px" },
             marginTop: { xs: "10px", sm: "0px" },
+            flexBasis: { xs: "100%", sm: "5%" },
           }}
         >
           <Typography variant="h2" sx={{ marginTop: "10px" }}>
@@ -78,7 +79,7 @@ const ViewingScreen = () => {
           <Chat eventId={event.id} />
         </Box>
       </Box>
-      <Box sx={{ marginLeft: "20px" }}>
+      <Box sx={{ marginLeft: "2%" }}>
         <Typography variant="h2" margin="0px">
           {event.title}
         </Typography>
@@ -87,7 +88,7 @@ const ViewingScreen = () => {
           {endDate.toLocaleTimeString()}
         </Typography>
       </Box>
-    </>
+    </Box>
   );
 };
 
