@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const socket = io("ws://localhost:5001");
+  const [input, setInput] = useState("");
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -20,6 +21,7 @@ const Chat = () => {
     });
 
     return () => {
+      console.log("Disconnecting from server");
       socket.off("connect");
       socket.off("disconnect");
       socket.off("message");
@@ -27,16 +29,25 @@ const Chat = () => {
   }, []);
 
   const sendMessage = () => {
-    const message = document.getElementById("message");
-    socket.send(message.value);
+    if (input.trim() && socket) {
+      socket.send(JSON.stringify({ message: input }));
+      setInput("");
+    }
   };
 
   return (
     <div>
+      <div>
+        {messages.map((msg, index) => (
+          <div key={index} style={{ color: "white" }}>
+            {msg}
+          </div>
+        ))}
+      </div>
       <input
         type="text"
-        name="message"
-        id="message"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
         onKeyPress={(e) => e.key === "Enter" && sendMessage()}
       />
       <button onClick={sendMessage}>Send</button>
