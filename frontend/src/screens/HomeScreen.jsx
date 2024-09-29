@@ -21,6 +21,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
+    console.log("Use effect in HomeScreen is called");
     const getEvents = async () => {
       try {
         const events = await getEventToday(user.token);
@@ -37,7 +38,7 @@ const HomeScreen = () => {
       }
     };
     getEvents();
-  }, [user.isAdmin]);
+  }, []);
 
   return (
     <>

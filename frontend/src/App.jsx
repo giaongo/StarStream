@@ -24,7 +24,8 @@ function App() {
         main: "#E1F7F5",
       },
       nokiaBrand: "#005AFF",
-      white: "#FFFFFF",
+      white: "#F9F9F9",
+      lightGrey: "#C7C8CC",
       black: "#000000",
       deleteBtn: "#F6C7C7",
       liveBtn: "#BC0000",
@@ -124,7 +125,9 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("starStreamToken");
-    dispatch(checkAndSetAdminUser(token));
+    if (token) {
+      dispatch(checkAndSetAdminUser(token));
+    }
   }, []);
 
   return (
