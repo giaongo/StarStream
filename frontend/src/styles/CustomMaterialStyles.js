@@ -80,12 +80,12 @@ export const LiveTextField = styled(MuiTextField)({
   },
 
   "& .MuiInputLabel-root": {
-    color: "white", // Set the label color to white
+    color: "white",
   },
 });
 
 export const NameChatTextField = styled(MuiTextField)({
-  width: "30%",
+  width: "50%",
   backgroundColor: "#424242",
   borderRadius: "5px 5px 0 0",
   "& .MuiInputBase-input": {

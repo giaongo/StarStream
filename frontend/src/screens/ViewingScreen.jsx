@@ -11,8 +11,8 @@ const ViewingScreen = () => {
   const location = useLocation();
   const event = location.state?.event;
   const viewing_url = location.state?.viewing_url.url;
-  const startDate = new Date(event.start_date);
-  const endDate = new Date(event.end_date);
+  const startDate = new Date(event?.start_date);
+  const endDate = new Date(event?.end_date);
 
   // TODO: replace the src with the viewing_url
   const videoJsOptions = {
@@ -43,22 +43,38 @@ const ViewingScreen = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh" }}>
+    <Box component="section" sx={{ height: "100%" }}>
       <Box
-        component="section"
+        sx={{
+          m: 4,
+          mb: 0,
+          width: "30%",
+          backgroundColor: "rgba(55, 58, 64, 0.6)",
+          textAlign: "center",
+          borderRadius: "10px 10px 0px 0px",
+        }}
+      >
+        <Typography variant="h2" margin="0px">
+          {event?.title}
+        </Typography>
+        <Typography variant="subtitle1" component="div" display="inline">
+          <b>From:</b> {startDate.toLocaleTimeString()} - <b>To: </b>{" "}
+          {endDate.toLocaleTimeString()}
+        </Typography>
+      </Box>
+      <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          margin: "1.1%",
-          marginBottom: "10px",
+          flexDirection: { xs: "column", md: "row" },
+          m: 4,
+          mt: 0,
+          marginBottom: { xs: "25px", md: "20px" },
         }}
       >
         <Box
-          className="videoContainer"
           sx={{
-            boxShadow: 3,
             flexGrow: 1,
-            flexBasis: "48%",
+            flexBasis: "47%",
           }}
         >
           <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
@@ -66,29 +82,21 @@ const ViewingScreen = () => {
 
         <Box
           sx={{
-            flexGrow: 1,
-            marginLeft: { xs: "0px", sm: "20px" },
-            marginTop: { xs: "10px", sm: "0px" },
+            flex: 1,
+            marginLeft: { xs: "0px", md: "20px" },
+            marginTop: { xs: "20px", md: "0px" },
             flexBasis: { xs: "100%", sm: "5%" },
             backgroundColor: "black",
-            boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.2)",
+            boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
+            maxHeight: { xs: "550px", md: "990px" },
+            overflow: "auto",
           }}
         >
           <Typography variant="h2" sx={{ marginTop: "10px" }}>
             Live Chat
           </Typography>
-          {/* This area allocates for chatbox component */}
-          <Chat eventId={event.id} />
+          <Chat eventId={event?.id} />
         </Box>
-      </Box>
-      <Box sx={{ marginLeft: "2%" }}>
-        <Typography variant="h2" margin="0px">
-          {event.title}
-        </Typography>
-        <Typography variant="subtitle1" component="div" display="inline">
-          <b>From:</b> {startDate.toLocaleTimeString()} - <b>To: </b>{" "}
-          {endDate.toLocaleTimeString()}
-        </Typography>
       </Box>
     </Box>
   );

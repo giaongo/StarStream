@@ -2,34 +2,21 @@ import React, { useEffect, useState, useRef } from "react";
 import socket from "socket.io-client";
 import PropTypes from "prop-types";
 import { baseUrl } from "../utils/variables";
-import {
-  ListItem,
-  Divider,
-  Avatar,
-  ListItemAvatar,
-  Typography,
-  List,
-  TextField,
-  Fab,
-  FormControl,
-  FormLabel,
-  Container,
-} from "@mui/material";
+import { Divider, List, Fab, FormControl, Box, Container } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SendIcon from "@mui/icons-material/Send";
 import {
   LiveTextField,
   NameChatTextField,
-  StyledBadge,
 } from "../styles/CustomMaterialStyles";
+import ChatContent from "./ChatContent";
 
 const Chat = ({ eventId }) => {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
+  const [chatName, setChatName] = useState("");
   const socketClientRef = useRef();
   const client = socket(baseUrl, { autoConnect: false });
-  const name = "Giao Ngo";
-  const content = "This is a test";
 
   useEffect(() => {
     client.connect();
@@ -54,97 +41,86 @@ const Chat = ({ eventId }) => {
     };
   }, []);
 
-  const handleSend = async () => {
+  const handleSend = async (event) => {
+    event.preventDefault();
     socketClientRef.current.emit("message", {
       room: eventId,
-      message,
+      message: {
+        name:
+          chatName.charAt(0).toUpperCase() + chatName.slice(1).toLowerCase() ||
+          "Anonymous",
+        text: message,
+      },
     });
     setMessage("");
   };
   return (
-    <Container sx={{ display: "flex", flexDirection: "column", height: "90%" }}>
-      {/* <div>
-        <h1>Messages</h1>
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "90%",
+      }}
+    >
+      <List
+        sx={{
+          color: "white",
+          flex: 1,
+          overflow: "auto",
+        }}
+      >
         {chats.map((chat, id) => (
-          <div style={{ color: "white" }} key={id}>
-            {chat.message}
-          </div>
+          <ChatContent key={id} content={chat} />
         ))}
-      </div>
-      <div>
-        <input value={message} onChange={(e) => setMessage(e.target.value)} />
-        <button onClick={handleSend}>Send</button>
-      </div> */}
-      <List sx={{ color: "white", flex: 1 }}>
-        <ListItem alignItems="center">
-          <ListItemAvatar sx={{ textAlign: "center" }}>
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              variant="dot"
-            >
-              <Avatar sx={{ width: 40, height: 40 }}>{name.charAt(0)}</Avatar>
-            </StyledBadge>
-          </ListItemAvatar>
-          <Typography marginRight="10px" sx={{ fontSize: "1.2rem" }}>
-            {name}:
-          </Typography>
-          <Typography sx={{ fontSize: "1.2rem" }}>{content}</Typography>
-        </ListItem>
       </List>
 
       <FormControl>
-        {/* <TextField
-          hiddenLabel
-          id="filled-hidden-label-small"
-          defaultValue="Small"
-          variant="filled"
-          size="small"
-          placeholder="Please enter your name:"
-          sx={{
-            backgroundColor: "#424242",
-            borderRadius: "0 5px 5px 0",
-          }}
-        /> */}
         <NameChatTextField
           hiddenLabel
           id="name-chat-input"
           variant="filled"
-          placeholder="Please enter your name"
+          placeholder="Your name is: ..."
+          value={chatName}
+          onChange={(event) => setChatName(event.target.value)}
         />
       </FormControl>
 
       <Divider sx={{ backgroundColor: "lightGrey", mb: 1.5 }} />
 
-      <FormControl
-        fullWidth
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <AccountCircle sx={{ color: "white", m: 2 }} />
-
-        <LiveTextField
-          label="Send something..."
-          id="chat-input"
-          variant="standard"
-          color="white"
-          maxRows={2}
-        />
-
-        <Fab
-          color="white"
-          aria-label="send"
-          size="small"
+      <Box component="form" onSubmit={handleSend}>
+        <FormControl
+          fullWidth
           sx={{
-            m: 1,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          <SendIcon />
-        </Fab>
-      </FormControl>
+          <AccountCircle sx={{ color: "white", m: 2 }} />
+
+          <LiveTextField
+            label="Send something..."
+            id="chat-input"
+            variant="standard"
+            color="white"
+            maxRows={2}
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+          />
+
+          <Fab
+            type="submit"
+            color="white"
+            aria-label="send"
+            size="small"
+            sx={{
+              m: 1,
+            }}
+          >
+            <SendIcon />
+          </Fab>
+        </FormControl>
+      </Box>
     </Container>
   );
 };

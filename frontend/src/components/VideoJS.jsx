@@ -44,8 +44,8 @@ const VideoJS = (props) => {
   }, [playerRef]);
 
   return (
-    <Box data-vjs-player>
-      <Box ref={videoRef} className="video-matrix" />
+    <Box data-vjs-player sx={{ flex: 1 }}>
+      <Box ref={videoRef} />
     </Box>
   );
 };
