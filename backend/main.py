@@ -1,12 +1,14 @@
 import quart_flask_patch
+from src.models.broker import Broker
 from src.models.types import User
-from src.controllers.adminController import add_default_admin, data_initial_setup
+from src.controllers.adminController import data_initial_setup
+from src.controllers.chatController import _receive
 from dotenv import find_dotenv, load_dotenv
-from src import create_app
+from src import QuartSIO, create_app
 import os
-from quart_db import QuartDB
 
-app = create_app()
+app = QuartSIO.get_instance()
+broker = Broker()
 load_dotenv(find_dotenv())
 
 
@@ -28,5 +30,32 @@ async def initial_setup():
         print('Error serving the app ', error)
 
 
+@app.event
+async def connect(sid, environ):
+    print('Connected')
+
+
+@app.event
+async def disconnect(sid):
+    print('Disconnected')
+
+
+@app.event
+async def message(sid, data):
+    print('Message:', data)
+    await app.emit('message', data, room=data['room'])
+
+
+@app.event
+async def join(sid, event_id):
+    print('Entering room', event_id)
+    await app.enter_room(sid, event_id)
+
+
+@app.event
+async def leave(sid, event_id):
+    print('Exiting room', event_id)
+    await app.leave_room(sid, event_id)
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run('0.0.0.0', 5001)

@@ -56,7 +56,6 @@ async def add_event():
                           event_image=unique_name,
                           streaming_key=form.streaming_key.data)
 
-        print('event', event.__dict__)
         add_event_result = await add_event_to_db(event.__dict__)
 
         if not add_event_result:

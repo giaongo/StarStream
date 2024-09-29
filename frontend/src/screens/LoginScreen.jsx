@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { displayNotification } from "../reducers/notificationReducer";
 import { checkAndSetAdminUser } from "../reducers/userReducer";
-import { FormCard, FormContainer } from "../components/FormLayout";
+import { FormContainer, FormCard } from "../styles/CustomMaterialStyles";
 
 const LoginScreen = () => {
   const [emailError, setEmailError] = React.useState(false);

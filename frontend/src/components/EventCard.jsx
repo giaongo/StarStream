@@ -8,23 +8,25 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import "../styles/Home.css";
+import "../styles/App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { baseUrl } from "../utils/variables";
 import { EVENT_STATUS } from "../utils/dataTypes";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useEvent } from "../hooks/ApiHooks";
 import { deleteEventById } from "../reducers/eventReducer";
+import { useNavigate } from "react-router-dom";
 
 const EventCard = ({ event }) => {
   const user = useSelector((state) => state.user);
   const startDate = new Date(event.start_date);
   const endDate = new Date(event.end_date);
   const intervalRef = useRef(null);
-  const status_stage = useRef(null);
+  const statusStageRef = useRef(null);
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
-  const { deleteEvent } = useEvent();
+  const { deleteEvent, getViewingUrl } = useEvent();
+  const navigate = useNavigate();
 
   /**
    * Compare current time with event start and end time. Set event status accordingly
@@ -38,10 +40,10 @@ const EventCard = ({ event }) => {
       console.log(`Event ${event.title} has ended`);
       clearInterval(intervalRef.current);
       if (
-        !status_stage.current ||
-        status_stage.current !== EVENT_STATUS["Ended"]
+        !statusStageRef.current ||
+        statusStageRef.current !== EVENT_STATUS["Ended"]
       ) {
-        status_stage.current = EVENT_STATUS["Ended"];
+        statusStageRef.current = EVENT_STATUS["Ended"];
         setEventStatus(EVENT_STATUS["Ended"]);
         dispatch(
           displayNotification(
@@ -51,8 +53,8 @@ const EventCard = ({ event }) => {
         );
       }
     } else if (millisecondDiffStart <= 0 && millisecondDiffEnd > 0) {
-      if (!status_stage.current) {
-        status_stage.current = EVENT_STATUS["Live"];
+      if (!statusStageRef.current) {
+        statusStageRef.current = EVENT_STATUS["Live"];
         setEventStatus(EVENT_STATUS["Live"]);
         dispatch(
           displayNotification(
@@ -73,15 +75,44 @@ const EventCard = ({ event }) => {
     }, 1000);
   };
 
+  /**
+   * Handle status button click
+   */
+  const handleBtnClick = async () => {
+    switch (eventStatus) {
+      case EVENT_STATUS["Live"]:
+        let viewing_url = "";
+        if (user.isAdmin) {
+          viewing_url = `http://${event.streaming_url}/hls/${event.streaming_key}.m3u8`;
+        } else {
+          try {
+            viewing_url = await getViewingUrl(event.id);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        navigate(`/event/${event.id}`, { state: { event, viewing_url } });
+        break;
+      case EVENT_STATUS["Ended"]:
+        console.log("ended btn is clicked");
+        navigate("/archive");
+        break;
+      default:
+        console.log("Anything else");
+    }
+  };
+
   useEffect(() => {
     setTimeCheckingInterval();
 
+    // clean up when component unmounts
     return () => {
-      console.log("event card component is unmounted");
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
-        status_stage.current = null;
+      }
+      if (statusStageRef.current) {
+        statusStageRef.current = null;
       }
     };
   }, []);
@@ -129,7 +160,7 @@ const EventCard = ({ event }) => {
           {user.isAdmin && (
             <>
               <Typography variant="subtitle2" component="div">
-                Streaming status:{" "}
+                <b>Streaming status:</b>{" "}
                 {eventStatus === EVENT_STATUS["Upcoming"]
                   ? "Upcoming"
                   : eventStatus === EVENT_STATUS["Live"]
@@ -137,10 +168,10 @@ const EventCard = ({ event }) => {
                   : "Ended"}
               </Typography>
               <Typography variant="subtitle2" component="div">
-                Streaming url: {event.streaming_url}
+                <b>Streaming url:</b> rtmp://{event.streaming_url}/stream
               </Typography>
               <Typography variant="subtitle2" component="div">
-                Streaming key: {event.streaming_key}
+                <b>Streaming key:</b> {event.streaming_key}
               </Typography>
             </>
           )}
@@ -161,6 +192,7 @@ const EventCard = ({ event }) => {
                   color: "white", // Overrides default disabled text color
                 },
               }}
+              onClick={async () => await handleBtnClick()}
             >
               {eventStatus === EVENT_STATUS["Upcoming"]
                 ? "Upcoming"

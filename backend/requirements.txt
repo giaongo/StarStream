@@ -11,3 +11,5 @@ Flask-WTF
 email_validator
 pillow
 pytz
+python-socketio[asyncio_client]
+uvicorn
