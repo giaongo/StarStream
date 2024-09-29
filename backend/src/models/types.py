@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TypeAlias
 from quart import Quart
-from wtforms import DateTimeLocalField, FileField, Form, PasswordField, StringField, URLField, validators
+from wtforms import DateTimeLocalField, FileField, Form, PasswordField, StringField, URLField, ValidationError, validators
 
 
 App: TypeAlias = Quart
@@ -54,6 +54,11 @@ class AddEventForm(Form):
     event_image = FileField('Event Image')
     streaming_key = StringField('Streaming Key', validators=[
                                 validators.DataRequired(message="Streaming key is required.")])
+
+    def validate_end_date(form, field):
+        if (field.data < form.start_date.data):
+            raise ValidationError(
+                "End date has to be larger than start date to be added")
 
 
 class StreamingURLUpdateForm(Form):

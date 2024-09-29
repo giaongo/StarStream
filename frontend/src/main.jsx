@@ -1,10 +1,24 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import { configureStore } from "@reduxjs/toolkit";
+import notificationReducer from "./reducers/notificationReducer.js";
+import { Provider } from "react-redux";
+import userReducer from "./reducers/userReducer.js";
+import eventReducer from "./reducers/eventReducer.js";
 
-createRoot(document.getElementById('root')).render(
+const store = configureStore({
+  reducer: {
+    notification: notificationReducer,
+    user: userReducer,
+    event: eventReducer,
+  },
+});
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </StrictMode>
+);
