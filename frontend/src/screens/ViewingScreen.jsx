@@ -23,8 +23,8 @@ const ViewingScreen = () => {
     experimentalSvgIcons: true,
     sources: [
       {
-        src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        type: "video/mp4",
+        src: viewing_url,
+        type: "application/x-mpegURL",
       },
     ],
   };

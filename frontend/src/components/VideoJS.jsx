@@ -20,15 +20,15 @@ const VideoJS = (props) => {
         videojs.log("player is ready");
         onReady && onReady(player);
       }));
-
-      // You could update an existing player in the `else` block here
-      // on prop change, for example:
     } else {
       const player = playerRef.current;
 
-      player.autoplay(options.autoplay);
-      player.src(options.sources);
+      options.autoplay && player.autoplay(options.autoplay);
+      options.sources && player.src(options.sources);
     }
+    player.on("error", function () {
+      console.log("player error ", player.error());
+    });
   }, [options, videoRef]);
 
   // Dispose the Video.js player when the functional component unmounts

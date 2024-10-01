@@ -82,14 +82,10 @@ const EventCard = ({ event }) => {
     switch (eventStatus) {
       case EVENT_STATUS["Live"]:
         let viewing_url = "";
-        if (user.isAdmin) {
-          viewing_url = `http://${event.streaming_url}/hls/${event.streaming_key}.m3u8`;
-        } else {
-          try {
-            viewing_url = await getViewingUrl(event.id);
-          } catch (error) {
-            console.error(error);
-          }
+        try {
+          viewing_url = await getViewingUrl(event.id);
+        } catch (error) {
+          console.error(error);
         }
         navigate(`/event/${event.id}`, { state: { event, viewing_url } });
         break;
@@ -168,7 +164,7 @@ const EventCard = ({ event }) => {
                   : "Ended"}
               </Typography>
               <Typography variant="subtitle2" component="div">
-                <b>Streaming url:</b> rtmp://{event.streaming_url}/stream
+                <b>Streaming url:</b> {event.streaming_url}
               </Typography>
               <Typography variant="subtitle2" component="div">
                 <b>Streaming key:</b> {event.streaming_key}
