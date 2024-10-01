@@ -66,3 +66,10 @@ class StreamingURLUpdateForm(Form):
     """
     streaming_url = URLField('Streaming URL', validators=[
         validators.DataRequired(message="Streaming url is required."), validators.URL()])
+
+
+class ViewingURLUpdateForm(Form):
+    """ Viewing form validation
+    """
+    viewing_url = URLField('Viewing URL', validators=[
+        validators.DataRequired(message="Viewing url is required."), validators.URL()])

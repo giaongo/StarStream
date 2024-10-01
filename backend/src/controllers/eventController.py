@@ -65,9 +65,14 @@ async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
     Returns:
         str | None
     """
-    key = await get_streaming_key(event_id)
-    url = app.streaming_url
-    if (key and url):
-        return f'http://{url}/hls/{key}.m3u8'
-    else:
+    try:
+        key = await get_streaming_key(event_id)
+        result = await g.connection.fetch_one("SELECT viewing_url FROM streaming_setting")
+        if (key and result):
+            return f'{result["viewing_url"]}/{key}/index.m3u8'
+        else:
+            return None
+
+    except Exception as error:
+        print(f'Error getting viewing url {error}')
         return None
