@@ -23,8 +23,8 @@ const ViewingScreen = () => {
     experimentalSvgIcons: true,
     sources: [
       {
-        src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        type: "video/mp4",
+        src: viewing_url,
+        type: "application/x-mpegURL",
       },
     ],
   };
@@ -55,7 +55,7 @@ const ViewingScreen = () => {
         }}
       >
         <Typography variant="h2" margin="0px">
-          {event?.title}
+          {event?.title.toUpperCase()}
         </Typography>
         <Typography variant="subtitle1" component="div" display="inline">
           <b>From:</b> {startDate.toLocaleTimeString()} - <b>To: </b>{" "}

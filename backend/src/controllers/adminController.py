@@ -219,3 +219,21 @@ async def update_streaming_url(url: str) -> bool:
     except Exception as error:
         print(f'error updating streaming url {error}')
         return False
+
+
+async def update_viewing_url(url: str) -> bool:
+    """Update the viewing url
+
+    Args:
+        url (str)
+
+    Returns:
+        bool
+    """
+
+    try:
+        await g.connection.execute("UPDATE streaming_setting SET viewing_url = :url", {"url": url})
+        return True
+    except Exception as error:
+        print(f'error updating streaming url {error}')
+        return False

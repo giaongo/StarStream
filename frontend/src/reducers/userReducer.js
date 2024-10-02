@@ -24,12 +24,24 @@ export default userSlice.reducer;
 
 /**
  * React thunk pattern to check and set the admin user
- * @param {*} userToken
- * @returns
  */
-export const checkAndSetAdminUser = (userToken) => {
-  return async (dispatch, _getState) => {
-    userToken && dispatch(setAdmin({ token: userToken, isAdmin: true }));
+export const checkAndSetAdminUser = (userToken, checkToken = null) => {
+  return async (dispatch) => {
+    try {
+      let isAdmin = true;
+      if (checkToken) {
+        const response = await checkToken(userToken);
+        if (!response) {
+          dispatch(removeAdmin());
+          console.log("Invalid token, removing admin");
+          return;
+        }
+      }
+      console.log("Valid token, setting admin");
+      dispatch(setAdmin({ token: userToken, isAdmin }));
+    } catch (error) {
+      console.error(`checkAndSetAdminUser: ${error.message}`);
+    }
   };
 };
 
@@ -38,7 +50,7 @@ export const checkAndSetAdminUser = (userToken) => {
  * @returns
  */
 export const logoutAndRemoveAdmin = () => {
-  return async (dispatch, _getState) => {
+  return async (dispatch) => {
     dispatch(removeAdmin());
     localStorage.removeItem("starStreamToken");
   };

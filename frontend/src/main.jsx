@@ -6,6 +6,7 @@ import notificationReducer from "./reducers/notificationReducer.js";
 import { Provider } from "react-redux";
 import userReducer from "./reducers/userReducer.js";
 import eventReducer from "./reducers/eventReducer.js";
+import { BrowserRouter } from "react-router-dom";
 
 const store = configureStore({
   reducer: {
@@ -17,8 +18,10 @@ const store = configureStore({
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </BrowserRouter>
   </StrictMode>
 );

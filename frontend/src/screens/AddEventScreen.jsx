@@ -25,9 +25,9 @@ const AddEventScreen = () => {
   const [endDateError, setEndDateError] = useState(false);
   const [uploadFile, setuploadFile] = useState("");
   const user = useSelector((state) => state.user);
-  const { addEvent } = useEvent();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { addEvent } = useEvent(navigate, dispatch);
 
   /**
    * Validate form input

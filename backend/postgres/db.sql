@@ -24,9 +24,10 @@ CREATE TABLE IF NOT EXISTS admin (
 
 CREATE TABLE IF NOT EXISTS streaming_setting (
     id SERIAL PRIMARY KEY, 
-    streaming_url VARCHAR(255) NOT NULL
+    streaming_url VARCHAR(255) NOT NULL, 
+    viewing_url VARCHAR(255) NOT NULL
 );
 
-INSERT INTO streaming_setting (streaming_url) VALUES ('localhost:1935');
+INSERT INTO streaming_setting (streaming_url, viewing_url) VALUES ('rtmp://51.21.137.226/live', 'http://51.21.137.226:8000/live');
 
 ALTER DATABASE starstream_db SET TIMEZONE TO  'posix/Europe/Helsinki';              
