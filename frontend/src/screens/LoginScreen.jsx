@@ -17,9 +17,10 @@ const LoginScreen = () => {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const { loginAdmin } = useAuthentication();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loginAdmin } = useAuthentication(navigate, dispatch);
 
   /**
    * Validate form inputs

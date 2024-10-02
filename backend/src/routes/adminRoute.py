@@ -111,3 +111,18 @@ async def edit_viewing_url():
             return {'msg': 'error updating viewing url'}, 400
         return {'msg': f'viewing url updated successfully with url {current_app.viewing_url}'}, 200
     return {'msg': 'invalid viewing url'}, 406
+
+
+@admin.get('/token')
+@jwt_required
+async def check_token():
+    """check token validity
+
+    Args:
+        token (str)
+    """
+    current_user = get_jwt_identity()
+    if current_user:
+        return {'msg': 'token is valid'}, 200
+
+    return {'msg': 'token is invalid'}, 401

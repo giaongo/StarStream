@@ -1,6 +1,4 @@
-import { useDispatch } from "react-redux";
 import { baseUrl } from "../utils/variables";
-import { useNavigate } from "react-router-dom";
 import { logoutAndRemoveAdmin } from "../reducers/userReducer";
 
 const doFetch = async (url, options, navigate, dispatch) => {
@@ -17,10 +15,7 @@ const doFetch = async (url, options, navigate, dispatch) => {
   return json;
 };
 
-const useAuthentication = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
+const useAuthentication = (navigate, dispatch) => {
   const loginAdmin = async (credentials) => {
     const options = {
       method: "POST",
@@ -39,13 +34,31 @@ const useAuthentication = () => {
     }
   };
 
-  return { loginAdmin };
+  const checkToken = async (token) => {
+    const options = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const result = await doFetch(
+        `${baseUrl}/admin/token`,
+        options,
+        navigate,
+        dispatch
+      );
+
+      return result;
+    } catch (error) {
+      throw new Error(`checkTokenError: ${error.message}`);
+    }
+  };
+
+  return { loginAdmin, checkToken };
 };
 
-const useEvent = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
+const useEvent = (navigate, dispatch) => {
   const getEventToday = async (token) => {
     const options = {
       method: "GET",

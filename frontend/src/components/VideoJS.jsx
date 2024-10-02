@@ -26,9 +26,6 @@ const VideoJS = (props) => {
       options.autoplay && player.autoplay(options.autoplay);
       options.sources && player.src(options.sources);
     }
-    player.on("error", function () {
-      console.log("player error ", player.error());
-    });
   }, [options, videoRef]);
 
   // Dispose the Video.js player when the functional component unmounts

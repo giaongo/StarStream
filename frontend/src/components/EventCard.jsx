@@ -25,8 +25,8 @@ const EventCard = ({ event }) => {
   const statusStageRef = useRef(null);
   const [eventStatus, setEventStatus] = useState(EVENT_STATUS["Upcoming"]);
   const dispatch = useDispatch();
-  const { deleteEvent, getViewingUrl } = useEvent();
   const navigate = useNavigate();
+  const { deleteEvent, getViewingUrl } = useEvent(navigate, dispatch);
 
   /**
    * Compare current time with event start and end time. Set event status accordingly

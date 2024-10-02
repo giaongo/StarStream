@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider } from "@mui/material";
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddEventScreen from "./screens/AddEventScreen";
@@ -9,11 +9,15 @@ import TopAppBar from "./components/TopAppBar";
 import MuiCssBaseline from "@mui/material/CssBaseline";
 import Notification from "./components/Notification";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import { checkAndSetAdminUser } from "./reducers/userReducer";
+import { useAuthentication } from "./hooks/ApiHooks";
 
 function App() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { checkToken } = useAuthentication(navigate, dispatch);
 
   const theme = createTheme({
     palette: {
@@ -126,24 +130,22 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("starStreamToken");
     if (token) {
-      dispatch(checkAndSetAdminUser(token));
+      dispatch(checkAndSetAdminUser(token, checkToken));
     }
   }, []);
 
   return (
     <ThemeProvider theme={theme}>
       <MuiCssBaseline />
-      <Router>
-        <TopAppBar />
-        <Notification />
-        <Routes>
-          <Route path="/" element={<HomeScreen />} />
-          <Route path="/admin/login" element={<LoginScreen />} />
-          <Route path="/admin/addEvent" element={<AddEventScreen />} />
-          <Route path="/archive" element={<VideoArchiveScreen />} />
-          <Route path="/event/:id" element={<ViewingScreen />} />
-        </Routes>
-      </Router>
+      <TopAppBar />
+      <Notification />
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/admin/login" element={<LoginScreen />} />
+        <Route path="/admin/addEvent" element={<AddEventScreen />} />
+        <Route path="/archive" element={<VideoArchiveScreen />} />
+        <Route path="/event/:id" element={<ViewingScreen />} />
+      </Routes>
     </ThemeProvider>
   );
 }
