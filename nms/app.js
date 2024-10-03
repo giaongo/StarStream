@@ -1,4 +1,11 @@
 import NodeMediaServer from "node-media-server";
+import path from "node:path";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const mediaPath = path.join(__dirname, "media");
 
 const config = {
   rtmp: {
@@ -39,6 +46,7 @@ nms.on("preConnect", (id, args) => {
     "[NodeEvent on preConnect]",
     `id=${id} args=${JSON.stringify(args)}`
   );
+
   // let session = nms.getSession(id);
   // session.reject();
 });
@@ -78,6 +86,9 @@ nms.on("donePublish", (id, StreamPath, args) => {
     "[NodeEvent on donePublish]",
     `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
   );
+
+  const video_path = path.join(mediaPath, StreamPath);
+  uploadAndRemove(video_path);
 });
 
 nms.on("prePlay", (id, StreamPath, args) => {
@@ -118,3 +129,32 @@ nms.on("debugMessage", (...args) => {
 nms.on("ffDebugMessage", (...args) => {
   // custom logger ffmpeg debug message handler
 });
+
+/**
+ * Upload mp4 file to S3 and remove ít from local storage
+ * @param {*} video_path
+ */
+const uploadAndRemove = (video_path) => {
+  // Upload file to S3
+  fs.readdir(video_path, (err, files) => {
+    if (err) {
+      console.error(err);
+      return;
+    } else {
+      files.forEach((file) => {
+        if (path.extname(file) === ".mp4") {
+          console.log("file is: ", file);
+        }
+      });
+    }
+  });
+
+  // remove file and folder from local storage
+  fs.rm(video_path, { recursive: true }, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log("file and folder are removed successfully");
+  });
+};
