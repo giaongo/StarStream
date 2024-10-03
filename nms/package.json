@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "dependencies": {
-    "node-media-server": "^2.7.0"
-  }
+    "@aws-sdk/client-s3": "^3.663.0",
+    "node-media-server": "^2.7.0",
+    "nodemon": "^3.1.7"
+  },
+  "type": "module"
 }
