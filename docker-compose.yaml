@@ -38,5 +38,15 @@ services:
       - postgresql
       - backend
 
+  nms: 
+    image: giaongo/streaming_server
+    ports:
+      - "1935:1935"
+      - "8000:8000"
+      - "8443:8443"
+    volumes:
+      - ./nms/media:/nms/media:rw
+    container_name: nms
+
 volumes:
   persist-volume:
