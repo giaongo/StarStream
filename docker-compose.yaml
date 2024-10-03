@@ -16,7 +16,7 @@ services:
     # image: postgres
     image: giaongo/postgres_starstream:1.0
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - persist-volume:/var/lib/postgresql/data
       # - ./postgres/db.sql:/docker-entrypoint-initdb.d/init.sql

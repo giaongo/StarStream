@@ -1,4 +1,5 @@
 import quart_flask_patch
+import uvicorn
 from src.models.broker import Broker
 from src.models.types import User
 from src.controllers.adminController import data_initial_setup
@@ -58,4 +59,4 @@ async def leave(sid, event_id):
     await app.leave_room(sid, event_id)
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', 5001)
+    uvicorn.run('main:app', host='0.0.0.0', port=5001, log_level='info')
