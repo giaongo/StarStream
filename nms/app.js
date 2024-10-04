@@ -3,6 +3,8 @@ import path from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
+import { uploadFileToAWS } from "./awsS3Connect.js";
+import "dotenv/config";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mediaPath = path.join(__dirname, "media");
@@ -81,14 +83,14 @@ nms.on("postPublish", (id, StreamPath, args) => {
   );
 });
 
-nms.on("donePublish", (id, StreamPath, args) => {
+nms.on("donePublish", async (id, StreamPath, args) => {
   console.log(
     "[NodeEvent on donePublish]",
     `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
   );
 
   const video_path = path.join(mediaPath, StreamPath);
-  uploadAndRemove(video_path);
+  await uploadAndRemove(video_path);
 });
 
 nms.on("prePlay", (id, StreamPath, args) => {
@@ -132,29 +134,23 @@ nms.on("ffDebugMessage", (...args) => {
 
 /**
  * Upload mp4 file to S3 and remove ít from local storage
- * @param {*} video_path
  */
-const uploadAndRemove = (video_path) => {
+const uploadAndRemove = async (video_path) => {
   // Upload file to S3
-  fs.readdir(video_path, (err, files) => {
+  fs.readdir(video_path, async (err, files) => {
     if (err) {
       console.error(err);
       return;
     } else {
-      files.forEach((file) => {
+      files.forEach(async (file) => {
         if (path.extname(file) === ".mp4") {
-          console.log("file is: ", file);
+          await uploadFileToAWS(
+            path.join(path.basename(video_path), file),
+            path.join(video_path, file),
+            video_path
+          );
         }
       });
     }
-  });
-
-  // remove file and folder from local storage
-  fs.rm(video_path, { recursive: true }, (err) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log("file and folder are removed successfully");
   });
 };
