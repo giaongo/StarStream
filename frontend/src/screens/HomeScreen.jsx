@@ -10,11 +10,10 @@ import { addEvents } from "../reducers/eventReducer";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
-
+  const eventState = useSelector((state) => state.event);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { getEventToday } = useEvent(navigate, dispatch);
-  const eventState = useSelector((state) => state.event);
 
   const handleFabBtnClick = () => {
     console.log("Fab button clicked");
@@ -39,7 +38,7 @@ const HomeScreen = () => {
       }
     };
     getEvents();
-  }, []);
+  }, [user.token]);
 
   return (
     <>
