@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import { uploadFileToAWS } from "./awsS3Connect.js";
 import "dotenv/config";
+import axios from "axios";
+import { baseUrl, cdnUrl } from "./utils/variables.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mediaPath = path.join(__dirname, "media");
@@ -43,100 +45,16 @@ const config = {
 var nms = new NodeMediaServer(config);
 nms.run();
 
-nms.on("preConnect", (id, args) => {
-  console.log(
-    "[NodeEvent on preConnect]",
-    `id=${id} args=${JSON.stringify(args)}`
-  );
-
-  // let session = nms.getSession(id);
-  // session.reject();
-});
-
-nms.on("postConnect", (id, args) => {
-  console.log(
-    "[NodeEvent on postConnect]",
-    `id=${id} args=${JSON.stringify(args)}`
-  );
-});
-
-nms.on("doneConnect", (id, args) => {
-  console.log(
-    "[NodeEvent on doneConnect]",
-    `id=${id} args=${JSON.stringify(args)}`
-  );
-});
-
-nms.on("prePublish", (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on prePublish]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-  // let session = nms.getSession(id);
-  // session.reject();
-});
-
-nms.on("postPublish", (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on postPublish]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-});
-
 nms.on("donePublish", async (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on donePublish]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-
   const video_path = path.join(mediaPath, StreamPath);
   await uploadAndRemove(video_path);
 });
 
-nms.on("prePlay", (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on prePlay]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-  // let session = nms.getSession(id);
-  // session.reject();
-});
-
-nms.on("postPlay", (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on postPlay]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-});
-
-nms.on("donePlay", (id, StreamPath, args) => {
-  console.log(
-    "[NodeEvent on donePlay]",
-    `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`
-  );
-});
-
-nms.on("logMessage", (...args) => {
-  // custom logger log message handler
-});
-
-nms.on("errorMessage", (...args) => {
-  // custom logger error message handler
-});
-
-nms.on("debugMessage", (...args) => {
-  // custom logger debug message handler
-});
-
-nms.on("ffDebugMessage", (...args) => {
-  // custom logger ffmpeg debug message handler
-});
-
 /**
- * Upload mp4 file to S3 and remove ít from local storage
+ * Upload video mp4 to S3, update the video data to the database via rest api and remove the video from media folder
+ * @param {*} video_path
  */
 const uploadAndRemove = async (video_path) => {
-  // Upload file to S3
   fs.readdir(video_path, async (err, files) => {
     if (err) {
       console.error(err);
@@ -144,13 +62,69 @@ const uploadAndRemove = async (video_path) => {
     } else {
       files.forEach(async (file) => {
         if (path.extname(file) === ".mp4") {
-          await uploadFileToAWS(
-            path.join(path.basename(video_path), file),
-            path.join(video_path, file),
-            video_path
-          );
+          try {
+            const streaming_key = path.basename(video_path);
+            const combinedName = path.join(streaming_key, file);
+            const filePath = path.join(video_path, file);
+
+            // upload file to AWS S3
+            const uploadAWSResult = await uploadFileToAWS(
+              combinedName,
+              filePath
+            );
+
+            // upload video information to database
+            const uploadToDBResult = await uploadVideoInfoToDB(
+              `${cdnUrl}/${combinedName}`,
+              streaming_key
+            );
+
+            // Remove file from local storage if upload to AWS S3 and database is successful
+            if (
+              uploadAWSResult &&
+              uploadToDBResult &&
+              fs.existsSync(filePath)
+            ) {
+              // Remove file from local storage
+              fs.unlink(filePath, (err) => {
+                if (err) {
+                  throw new Error("Error deleting file ", err);
+                }
+              });
+              // Remove folder from local storage
+              if (fs.existsSync(video_path)) {
+                fs.rm(video_path, { recursive: true }, (err) => {
+                  if (err) {
+                    throw new Error("Error deleting folder ", err);
+                  }
+                });
+              }
+            }
+            console.log("Upload and remove successful");
+          } catch (error) {
+            console.error("Error uploading file to AWS S3 ", error);
+          }
         }
       });
     }
   });
+};
+
+/**
+ * Upload video information to database of main app backend
+ * @param {*} video_url
+ * @param {*} streaming_key
+ * @returns
+ */
+const uploadVideoInfoToDB = async (video_url, streaming_key) => {
+  console.log("url is ", baseUrl + "/events/archives");
+  try {
+    axios.post(baseUrl + "/events/archives", {
+      video_url,
+      streaming_key,
+    });
+    return true;
+  } catch (error) {
+    throw new Error("Error uploading video information to database", error);
+  }
 };

@@ -8,3 +8,4 @@ postgres
 postgres/*
 .gitignore
 README.md
+.env

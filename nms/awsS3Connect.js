@@ -15,7 +15,7 @@ const s3Client = new S3Client({
  * @param {*} filePath
  * @param {*} videoPath
  */
-const uploadFileToAWS = async (fileName, filePath, videoPath) => {
+const uploadFileToAWS = async (fileName, filePath) => {
   try {
     const uploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -23,25 +23,10 @@ const uploadFileToAWS = async (fileName, filePath, videoPath) => {
       Body: fs.createReadStream(filePath),
     };
 
-    const result = await s3Client.send(new PutObjectCommand(uploadParams));
-    if (fs.existsSync(filePath)) {
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.error("Error deleting file ", err);
-        }
-      });
-    }
-
-    if (fs.existsSync(videoPath)) {
-      fs.rm(videoPath, { recursive: true }, (err) => {
-        if (err) {
-          console.error("Error deleting folder ", err);
-        }
-      });
-    }
-    console.log("Successfully uploaded file to AWS S3");
+    await s3Client.send(new PutObjectCommand(uploadParams));
+    return true;
   } catch (error) {
-    console.error("Error uploading file to AWS S3", error);
+    throw new Error("Error uploading file to AWS S3 ", error);
   }
 };
 
