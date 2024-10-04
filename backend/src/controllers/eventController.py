@@ -1,7 +1,6 @@
 from quart import g
 from pytz import timezone
-
-from src import QuartSIO
+from .. import QuartSIO
 from ..models.types import App, EventData
 
 
@@ -57,7 +56,7 @@ async def get_streaming_key(event_id: int) -> str | None:
 
 
 async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
-    """ generate viewing url from streaming url and streaming key
+    """ Generate viewing url from streaming url and streaming key
 
     Args:
         event_id (int)
@@ -76,3 +75,26 @@ async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
     except Exception as error:
         print(f'Error getting viewing url {error}')
         return None
+
+
+async def add_video_archive(video_url: str, streaming_key: str) -> bool:
+    """ Add video archive url and streaming key to database
+
+    Args:
+        video_url (str)
+        streaming_key (str)
+
+    Returns:
+        bool
+    """
+
+    try:
+        result = await g.connection.execute("INSERT INTO videos_archives (video_path, key_name) VALUES (:video_url, :streaming_key)",
+                                            {'video_url': video_url, 'streaming_key': streaming_key})
+        if result:
+            print(f'Video archive added successfully ', result)
+            return True
+        return False
+    except Exception as error:
+        print(f'Error adding video archive {error}')
+        return False

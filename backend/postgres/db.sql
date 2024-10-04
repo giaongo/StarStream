@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS videos_archives (
     id SERIAL PRIMARY KEY, 
     video_path VARCHAR(255),
-    event_id INT,
-    CONSTRAINT fk_event
-        FOREIGN KEY (event_id)
-            REFERENCES events(id)
+    key_name VARCHAR(50),
+    CONSTRAINT fk_video
+        FOREIGN KEY (key_name)
+            REFERENCES events(streaming_key)
 );
 
 CREATE TABLE IF NOT EXISTS admin (
