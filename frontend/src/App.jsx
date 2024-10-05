@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import { checkAndSetAdminUser } from "./reducers/userReducer";
 import { useAuthentication } from "./hooks/ApiHooks";
+import ViewingArchiveScreen from "./screens/ViewingArchiveScreen";
 
 function App() {
   const dispatch = useDispatch();
@@ -145,6 +146,7 @@ function App() {
         <Route path="/admin/addEvent" element={<AddEventScreen />} />
         <Route path="/archive" element={<VideoArchiveScreen />} />
         <Route path="/event/:id" element={<ViewingScreen />} />
+        <Route path="/archive/:id" element={<ViewingArchiveScreen />} />
       </Routes>
     </ThemeProvider>
   );

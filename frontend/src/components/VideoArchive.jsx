@@ -3,8 +3,10 @@ import Card from "@mui/material/Card";
 import { CardMedia, CardContent, Typography, IconButton } from "@mui/material";
 import PropTypes from "prop-types";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import { useNavigate } from "react-router-dom";
 
 const VideoArchive = ({ video }) => {
+  const navigate = useNavigate();
   return (
     <Card
       sx={{
@@ -30,7 +32,13 @@ const VideoArchive = ({ video }) => {
           {video.title}
         </Typography>
 
-        <IconButton aria-label="play" size="large">
+        <IconButton
+          aria-label="play"
+          size="large"
+          onClick={() =>
+            navigate(`/archive/${video.video_id}`, { state: { video } })
+          }
+        >
           <PlayCircleOutlineIcon sx={{ height: 38, width: 38 }} />
         </IconButton>
       </CardContent>
