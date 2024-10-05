@@ -10,7 +10,8 @@ const VideoArchive = ({ video }) => {
       sx={{
         width: 350,
         height: 300,
-        boxShadow: "20px 20px 34px -37px rgba(0,0,0,0.8)",
+        boxShadow:
+          "0 10px 8px 0 rgba(0, 0, 0, 0.2), 0 -10px 20px 0 rgba(0, 0, 0, 0.19)",
       }}
     >
       <CardMedia
