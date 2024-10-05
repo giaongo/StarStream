@@ -19,7 +19,7 @@ const HomeScreen = () => {
 
   const settings = {
     dots: true,
-    speed: 500,
+    speed: 2000,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
@@ -57,21 +57,21 @@ const HomeScreen = () => {
       <Typography variant="h1" textAlign="center" sx={{ marginBottom: "50px" }}>
         {!user.isAdmin ? "EVENTS TODAY" : "ADMIN EVENT MONITOR"}
       </Typography>
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        {eventState.length === 0 ? (
+      <Container>
+        {eventState.length < 0 ? (
           <Typography variant="h2" textAlign="center">
             No events found!
           </Typography>
-        ) : (
+        ) : eventState.length === 1 ? (
           eventState.map((event) => (
             <EventCard key={event.id} isLive={true} event={event} />
           ))
+        ) : (
+          <Slider {...settings}>
+            {eventState.map((event) => (
+              <EventCard key={event.id} isLive={true} event={event} />
+            ))}
+          </Slider>
         )}
       </Container>
 
