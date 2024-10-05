@@ -1,7 +1,6 @@
 from quart import g
-from pytz import timezone
 from .. import QuartSIO
-from ..models.types import App, EventData, VideoArchive
+from ..models.types import EventData, VideoArchive
 
 
 async def retrieve_events_for_today(isAdmin: bool, streaming_url: str) -> list[dict] | None:

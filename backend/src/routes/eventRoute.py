@@ -1,5 +1,4 @@
-from ..models.types import VideoArchive
-from quart import Blueprint, current_app, request, send_from_directory
+from quart import Blueprint, request, send_from_directory
 from quart_jwt_extended import jwt_optional, get_jwt_identity
 from .. import QuartSIO
 from .adminRoute import THUMBNAIL_FOLDER
@@ -8,12 +7,10 @@ from ..controllers.eventController import add_video_archive, get_video_archives,
 event = Blueprint('event', __name__)
 
 
-# this routing is partially protected. Can be either admin or public user
-
 @event.route('/today', methods=['GET'])
 @jwt_optional
 async def get_events_today():
-    """ Retrieve all events for today
+    """ Retrieve all events for today either admin or public user
 
     Returns:
         _type_: object
