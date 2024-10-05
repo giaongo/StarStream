@@ -1,14 +1,11 @@
 import quart_flask_patch
-from src.models.broker import Broker
 from src.models.types import User
 from src.controllers.adminController import data_initial_setup
-from src.controllers.chatController import _receive
 from dotenv import find_dotenv, load_dotenv
 from src import QuartSIO, create_app
 import os
 
 app = QuartSIO.get_instance()
-broker = Broker()
 load_dotenv(find_dotenv())
 
 

@@ -64,19 +64,20 @@ const uploadAndRemove = async (video_path) => {
         if (path.extname(file) === ".mp4") {
           try {
             const streaming_key = path.basename(video_path);
-            const combinedName = path.join(streaming_key, file);
+            const combined_name = path.join(streaming_key, file);
             const filePath = path.join(video_path, file);
 
             // upload file to AWS S3
             const uploadAWSResult = await uploadFileToAWS(
-              combinedName,
+              combined_name,
               filePath
             );
 
             // upload video information to database
             const uploadToDBResult = await uploadVideoInfoToDB(
-              `${cdnUrl}/${combinedName}`,
-              streaming_key
+              `${cdnUrl}/${combined_name}`,
+              streaming_key,
+              combined_name
             );
 
             // Remove file from local storage if upload to AWS S3 and database is successful
@@ -116,12 +117,13 @@ const uploadAndRemove = async (video_path) => {
  * @param {*} streaming_key
  * @returns
  */
-const uploadVideoInfoToDB = async (video_url, streaming_key) => {
+const uploadVideoInfoToDB = async (video_url, streaming_key, combined_name) => {
   console.log("url is ", baseUrl + "/events/archives");
   try {
     axios.post(baseUrl + "/events/archives", {
       video_url,
       streaming_key,
+      combined_name,
     });
     return true;
   } catch (error) {

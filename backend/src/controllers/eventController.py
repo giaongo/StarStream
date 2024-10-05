@@ -1,7 +1,7 @@
 from quart import g
 from pytz import timezone
 from .. import QuartSIO
-from ..models.types import App, EventData
+from ..models.types import App, EventData, VideoArchive
 
 
 async def retrieve_events_for_today(isAdmin: bool, streaming_url: str) -> list[dict] | None:
@@ -77,7 +77,7 @@ async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
         return None
 
 
-async def add_video_archive(video_url: str, streaming_key: str) -> bool:
+async def add_video_archive(video_url: str, streaming_key: str, combined_name: str) -> bool:
     """ Add video archive url and streaming key to database
 
     Args:
@@ -89,8 +89,11 @@ async def add_video_archive(video_url: str, streaming_key: str) -> bool:
     """
 
     try:
-        result = await g.connection.execute("INSERT INTO videos_archives (video_path, key_name) VALUES (:video_url, :streaming_key)",
-                                            {'video_url': video_url, 'streaming_key': streaming_key})
+        result = await g.connection.execute("INSERT INTO videos_archives (video_path, key_name, file_name) VALUES (:video_url, :streaming_key, :combined_name)",
+                                            {'video_url': video_url,
+                                             'streaming_key': streaming_key,
+                                             'combined_name': combined_name
+                                             })
         if result:
             print(f'Video archive added successfully ', result)
             return True
@@ -98,3 +101,31 @@ async def add_video_archive(video_url: str, streaming_key: str) -> bool:
     except Exception as error:
         print(f'Error adding video archive {error}')
         return False
+
+
+async def get_video_archives() -> list[dict] | None:
+    """ get video archives from database
+
+    Returns:
+        list[VideoArchive] | None
+    """
+    try:
+        archives = await g.connection.fetch_all("SELECT id as event_id, title, event_start_date, event_end_date, event_image, streaming_key, video_id, video_path, file_name  FROM events INNER JOIN videos_archives ON events.streaming_key = videos_archives.key_name;")
+        if archives:
+            video_archives = [VideoArchive(
+                event_id=archive["event_id"],
+                title=archive["title"],
+                event_start_date=archive["event_start_date"].strftime(
+                    '%Y-%m-%d %H:%M:%S'),
+                event_end_date=archive["event_end_date"].strftime(
+                    '%Y-%m-%d %H:%M:%S'),
+                event_image=archive["event_image"],
+                streaming_key=archive["streaming_key"],
+                video_id=archive["video_id"],
+                video_path=archive["video_path"],
+                file_name=archive["file_name"]
+            ).__dict__ for archive in archives]
+            return video_archives
+    except Exception as error:
+        print(f'Error getting video archives {error}')
+        return None

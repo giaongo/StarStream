@@ -1,8 +1,9 @@
+from ..models.types import VideoArchive
 from quart import Blueprint, current_app, request, send_from_directory
 from quart_jwt_extended import jwt_optional, get_jwt_identity
 from .. import QuartSIO
 from .adminRoute import THUMBNAIL_FOLDER
-from ..controllers.eventController import add_video_archive, get_viewing_url, retrieve_events_for_today
+from ..controllers.eventController import add_video_archive, get_video_archives, get_viewing_url, retrieve_events_for_today
 
 event = Blueprint('event', __name__)
 
@@ -44,7 +45,7 @@ async def serve_thumbnail(filename: str):
 
 
 @event.get('/viewing/<int:event_id>')
-async def getViewingUrlByEventId(event_id):
+async def get_viewing_url_by_eventId(event_id):
     """ Fetch viewing url by event id
 
     Args:
@@ -62,21 +63,28 @@ async def getViewingUrlByEventId(event_id):
 
 @event.route('/archives', methods=['GET'])
 async def get_archives():
-    """ Get all video archives
+    """ Get all video archives from database
 
     Returns:
         _type_: object
     """
-    return {'archives': 'Here is the list of archives'}, 200
+    result: list[dict] | None = await get_video_archives()
+    if not result:
+        return {'msg': 'No archives found'}, 404
+
+    return {'archives': result}, 200
 
 
 @event.post('/archives')
-async def insertVideoArchiveInfo():
+async def insert_video_archive_info():
     """ Insert video archive info to database
     """
 
     data = await request.get_json()
-    result = await add_video_archive(video_url=data['video_url'], streaming_key=data['streaming_key'])
+
+    result = await add_video_archive(video_url=data['video_url'],
+                                     streaming_key=data['streaming_key'],
+                                     combined_name=data['combined_name'])
 
     if not result:
         return {'msg': 'error adding video archive'}, 400
