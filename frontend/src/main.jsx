@@ -7,7 +7,8 @@ import { Provider } from "react-redux";
 import userReducer from "./reducers/userReducer.js";
 import eventReducer from "./reducers/eventReducer.js";
 import { BrowserRouter } from "react-router-dom";
-
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 const store = configureStore({
   reducer: {
     notification: notificationReducer,

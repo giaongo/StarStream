@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
-import { Typography, Container, Fab } from "@mui/material";
+import { Typography, Container, Fab, Box } from "@mui/material";
 import EventCard from "../components/EventCard";
+import Slider from "react-slick";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
 import { useEvent } from "../hooks/ApiHooks";
 import { displayNotification } from "../reducers/notificationReducer";
 import { useNavigate } from "react-router-dom";
 import { addEvents } from "../reducers/eventReducer";
+import CarouselBanner from "../components/CarouselBanner";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.user);
@@ -15,13 +17,21 @@ const HomeScreen = () => {
   const navigate = useNavigate();
   const { getEventToday } = useEvent(navigate, dispatch);
 
+  const settings = {
+    dots: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
+
   const handleFabBtnClick = () => {
     console.log("Fab button clicked");
     navigate("admin/addEvent");
   };
 
   useEffect(() => {
-    console.log("Use effect in HomeScreen is called");
     const getEvents = async () => {
       try {
         const events = await getEventToday(user.token);
@@ -38,10 +48,12 @@ const HomeScreen = () => {
       }
     };
     getEvents();
+    console.log("Fetching events ", eventState.length);
   }, [user.token]);
 
   return (
-    <>
+    <Box>
+      <CarouselBanner />
       <Typography variant="h1" textAlign="center" sx={{ marginBottom: "50px" }}>
         {!user.isAdmin ? "EVENTS TODAY" : "ADMIN EVENT MONITOR"}
       </Typography>
@@ -62,6 +74,7 @@ const HomeScreen = () => {
           ))
         )}
       </Container>
+
       {user.isAdmin && (
         <Fab
           color="primary"
@@ -77,7 +90,7 @@ const HomeScreen = () => {
           <AddIcon />
         </Fab>
       )}
-    </>
+    </Box>
   );
 };
 
