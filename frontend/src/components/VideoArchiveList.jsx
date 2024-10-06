@@ -41,18 +41,18 @@ const VideoArchiveList = ({ videos, title }) => {
   });
 
   return (
-    <Box className="video-archive-container">
+    <Box className="video-archive-container" sx={{ mt: 12 }}>
       <Box
         sx={{
           alignSelf: "flex-start",
           m: 0,
           pl: 5,
-          pb: 5,
+          mb: 2,
           display: "flex",
           alignItems: "center",
         }}
       >
-        <Typography variant="h1" component="div" sx={{ m: 0, mr: 2 }}>
+        <Typography variant="h1" component="div" sx={{ m: 0, mr: 2, mb: 0 }}>
           {title}
         </Typography>
         <Box className="actions-btns">
@@ -62,7 +62,12 @@ const VideoArchiveList = ({ videos, title }) => {
             sx={{ p: 0, color: "white" }}
             disabled={scrollPosition <= 0}
           >
-            <ArrowBackIosIcon sx={{ height: 40, width: 40 }} />
+            <ArrowBackIosIcon
+              sx={{
+                height: { xs: 20, md: 40 },
+                width: { xs: 20, md: 40 },
+              }}
+            />
           </IconButton>
           <IconButton
             className="btn-right"
@@ -74,7 +79,12 @@ const VideoArchiveList = ({ videos, title }) => {
                 containerRef.current?.clientWidth
             }
           >
-            <ArrowForwardIosIcon sx={{ height: 40, width: 40 }} />
+            <ArrowForwardIosIcon
+              sx={{
+                height: { xs: 20, md: 40 },
+                width: { xs: 20, md: 40 },
+              }}
+            />
           </IconButton>
         </Box>
       </Box>

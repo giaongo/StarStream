@@ -42,7 +42,12 @@ const CarouselBanner = () => {
 
   return (
     <>
-      <Box sx={{ width: "80%", height: "20%", margin: "auto" }}>
+      <Box
+        sx={{
+          width: "85%",
+          margin: "auto",
+        }}
+      >
         <Slider {...settings}>
           {slides.map((slide) => (
             <div key={slide.id} className="carousel-slide">

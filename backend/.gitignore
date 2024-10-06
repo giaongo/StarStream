@@ -6,3 +6,4 @@ src/*/__pycache__
 !uploads/.gitkeep
 /thumbnails/*
 !thumbnails/.gitkeep
+!thumbnails/sample*

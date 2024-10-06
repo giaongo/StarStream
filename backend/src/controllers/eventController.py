@@ -15,8 +15,10 @@ async def retrieve_events_for_today(isAdmin: bool, streaming_url: str) -> list[d
     """
     try:
         events = await g.connection.fetch_all("""SELECT * 
-                                              FROM events WHERE DATE(event_start_date) <= CAST(CURRENT_TIMESTAMP AS DATE) 
-                                              AND CAST(CURRENT_TIMESTAMP AS DATE) <= DATE(event_end_date) ORDER BY event_start_date:: timestamp :: time;""")
+                                              FROM events 
+                                              WHERE DATE(event_start_date) <= CAST(CURRENT_TIMESTAMP AS DATE) 
+                                              AND CAST(CURRENT_TIMESTAMP AS DATE) <= DATE(event_end_date) 
+                                              ORDER BY event_start_date:: timestamp :: time;""")
         if events:
             event_list = [EventData(
                 id=event["id"],
@@ -88,7 +90,8 @@ async def add_video_archive(video_url: str, streaming_key: str, combined_name: s
     """
 
     try:
-        result = await g.connection.execute("INSERT INTO videos_archives (video_path, key_name, file_name) VALUES (:video_url, :streaming_key, :combined_name)",
+        result = await g.connection.execute("""INSERT INTO videos_archives (video_path, key_name, file_name) 
+                                            VALUES (:video_url, :streaming_key, :combined_name)""",
                                             {'video_url': video_url,
                                              'streaming_key': streaming_key,
                                              'combined_name': combined_name
@@ -109,7 +112,19 @@ async def get_video_archives() -> list[dict] | None:
         list[VideoArchive] | None
     """
     try:
-        archives = await g.connection.fetch_all("SELECT id as event_id, title, event_start_date, event_end_date, event_image, streaming_key, video_id, video_path, file_name  FROM events INNER JOIN videos_archives ON events.streaming_key = videos_archives.key_name;")
+        archives = await g.connection.fetch_all("""SELECT id as event_id, 
+                                                title,
+                                                event_start_date,
+                                                event_end_date, 
+                                                event_image, 
+                                                streaming_key, 
+                                                video_id, 
+                                                video_path, 
+                                                file_name  
+                                                FROM events INNER JOIN videos_archives 
+                                                ON events.streaming_key = videos_archives.key_name
+                                                ORDER BY event_start_date DESC;
+                                                """)
         if archives:
             video_archives = [VideoArchive(
                 event_id=archive["event_id"],

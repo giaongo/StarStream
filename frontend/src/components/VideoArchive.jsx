@@ -4,6 +4,7 @@ import { CardMedia, CardContent, Typography, IconButton } from "@mui/material";
 import PropTypes from "prop-types";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../utils/variables";
 
 const VideoArchive = ({ video }) => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const VideoArchive = ({ video }) => {
     >
       <CardMedia
         sx={{ height: 200 }}
-        image="https://picsum.photos/200/300"
+        image={`${baseUrl}/events/thumbnail/${video.event_image}`}
         title="Event Video"
       />
       <CardContent

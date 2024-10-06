@@ -24,10 +24,6 @@ const ViewingArchiveScreen = () => {
     ],
   };
 
-  useEffect(() => {
-    console.log("video info is", videoInfo);
-  }, []);
-
   const handlePlayerReady = (player) => {
     playerRef.current = player;
 
@@ -46,7 +42,7 @@ const ViewingArchiveScreen = () => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        m: 4,
+        mt: 20,
       }}
     >
       <Box sx={{ flexBasis: "20%", backgroundColor: "rgba(43, 43, 43, 0.5)" }}>

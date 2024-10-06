@@ -17,7 +17,7 @@ services:
       - 5432:5432
     volumes:
       - persist-volume:/var/lib/postgresql/data
-      - ./backend/postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./backend/.env
     container_name: postgresql

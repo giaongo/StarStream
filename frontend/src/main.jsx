@@ -6,6 +6,7 @@ import notificationReducer from "./reducers/notificationReducer.js";
 import { Provider } from "react-redux";
 import userReducer from "./reducers/userReducer.js";
 import eventReducer from "./reducers/eventReducer.js";
+import archiveReducers from "./reducers/archiveReducer.js";
 import { BrowserRouter } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -14,6 +15,7 @@ const store = configureStore({
     notification: notificationReducer,
     user: userReducer,
     event: eventReducer,
+    archive: archiveReducers,
   },
 });
 
