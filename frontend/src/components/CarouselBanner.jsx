@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import Slider from "react-slick";
 import React from "react";
-import banner_1 from "../assets/banner_1.png";
+import banner_1 from "../assets/banner_1.jpg";
 import banner_2 from "../assets/banner_2.png";
 import banner_3 from "../assets/banner_3.jpg";
 
@@ -14,6 +14,7 @@ const CarouselBanner = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
+    arrows: false,
   };
 
   const slides = [

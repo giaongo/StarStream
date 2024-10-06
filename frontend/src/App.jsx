@@ -58,7 +58,7 @@ function App() {
     color: "#FFFFFF",
     fontFamily: "Iceland, sans-serif",
     fontWeight: "400",
-    margin: 20,
+    marginTop: "50px",
     "@media (min-width:600px)": {
       fontSize: "2.75rem",
     },
