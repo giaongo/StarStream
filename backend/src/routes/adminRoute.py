@@ -73,9 +73,8 @@ async def delete_event(event_id):
     """
     filename = await get_event_filename_by_id(event_id)
     if filename:
-        os.remove(os.path.join(THUMBNAIL_FOLDER, filename))
         delete_event_result = await delete_event_from_db(event_id)
-
+        os.remove(os.path.join(THUMBNAIL_FOLDER, filename))
         if not delete_event_result:
             return {'msg': f'error deleting event ${event_id} from database'}, 400
 

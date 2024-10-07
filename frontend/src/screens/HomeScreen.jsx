@@ -50,7 +50,6 @@ const HomeScreen = () => {
       }
     };
     getEvents();
-    console.log("Fetching events ", eventState.length);
   }, [user.token]);
 
   return (

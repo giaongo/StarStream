@@ -1,4 +1,5 @@
 import asyncpg
+from .eventController import get_streaming_key
 from ..models.types import App, User
 from quart import g
 from quart_bcrypt import check_password_hash, generate_password_hash
@@ -181,8 +182,12 @@ async def delete_event_from_db(event_id: int) -> bool:
     """
 
     try:
-        await g.connection.execute("DELETE FROM events WHERE id = :id", {"id": event_id})
-        return True
+        streaming_key = await get_streaming_key(event_id)
+        if streaming_key:
+            await g.connection.execute("DELETE FROM videos_archives WHERE key_name = :streaming_key", {"streaming_key": streaming_key})
+            await g.connection.execute("DELETE FROM events WHERE id = :id", {"id": event_id})
+            return True
+        return False
     except Exception as error:
         print(f'error deleting event from db {error}')
         return False
