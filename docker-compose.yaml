@@ -5,6 +5,7 @@ services:
       - "5001:5001"
     volumes:
       - ./backend:/backend
+    env_file: ./backend/.env
     container_name: backend
     depends_on:
       postgresql:
@@ -16,7 +17,7 @@ services:
       - 5432:5432
     volumes:
       - persist-volume:/var/lib/postgresql/data
-      - ./backend/postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./backend/.env
     container_name: postgresql
@@ -38,12 +39,14 @@ services:
       - postgresql
       - backend
 
-  nms: 
-    image: giaongo/streaming_server
+  nms:
+    build: ./nms 
+    # image: giaongo/streaming_server
     ports:
       - "1935:1935"
       - "8000:8000"
       - "8443:8443"
+    env_file: ./nms/.env
     volumes:
       - ./nms/media:/nms/media:rw
     container_name: nms

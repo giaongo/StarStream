@@ -85,7 +85,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <>
+    <Box sx={{mt: 20}}>
       <FormContainer direction="column" justifyContent="space-between">
         <FormCard variant="outlined">
           <Typography
@@ -153,7 +153,7 @@ const LoginScreen = () => {
           </Box>
         </FormCard>
       </FormContainer>
-    </>
+    </Box>
   );
 };
 

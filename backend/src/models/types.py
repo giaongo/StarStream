@@ -26,6 +26,19 @@ class EventData:
     id: int = 0
 
 
+@dataclass
+class VideoArchive:
+    event_id: int
+    title: str
+    event_start_date: datetime
+    event_end_date: datetime
+    event_image: str
+    streaming_key: str
+    video_id: int
+    video_path: str
+    file_name: str
+
+
 class LoginForm(Form):
     """ Login form validation"""
     email = StringField('Email', validators=[

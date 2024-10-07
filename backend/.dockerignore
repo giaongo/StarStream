@@ -3,8 +3,10 @@ src/_pycache_
 src/*/_pycache_
 .git
 thumbnails/*
+!thumbnails/sample*
 html/*
 postgres
 postgres/*
 .gitignore
 README.md
+.env

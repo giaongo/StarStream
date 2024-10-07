@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import { checkAndSetAdminUser } from "./reducers/userReducer";
 import { useAuthentication } from "./hooks/ApiHooks";
+import ViewingArchiveScreen from "./screens/ViewingArchiveScreen";
 
 function App() {
   const dispatch = useDispatch();
@@ -57,7 +58,8 @@ function App() {
     color: "#FFFFFF",
     fontFamily: "Iceland, sans-serif",
     fontWeight: "400",
-    margin: 20,
+    marginTop: "50px",
+    textShadow: "1px 0.5px 2px #fff",
     "@media (min-width:600px)": {
       fontSize: "2.75rem",
     },
@@ -145,6 +147,7 @@ function App() {
         <Route path="/admin/addEvent" element={<AddEventScreen />} />
         <Route path="/archive" element={<VideoArchiveScreen />} />
         <Route path="/event/:id" element={<ViewingScreen />} />
+        <Route path="/archive/:id" element={<ViewingArchiveScreen />} />
       </Routes>
     </ThemeProvider>
   );

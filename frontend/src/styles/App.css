@@ -8,3 +8,35 @@
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
     height: 1000px 
 }
+
+.video-archive-container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 2%;
+    align-items: center;
+}
+.content-box {
+    width: 3800px;
+    display: flex;
+    align-items: center;
+    gap: 60px
+}
+
+.carousel-slide {
+    position: relative;
+}
+.carousel-text {
+    position: absolute;
+    top: 70%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); 
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: Adds a transparent background */
+    padding: 10px;
+    border-radius: 10px;
+}

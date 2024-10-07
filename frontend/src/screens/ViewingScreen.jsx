@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import VideoJS from "../components/VideoJS";
 import { Typography, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
@@ -14,7 +14,6 @@ const ViewingScreen = () => {
   const startDate = new Date(event?.start_date);
   const endDate = new Date(event?.end_date);
 
-  // TODO: replace the src with the viewing_url
   const videoJsOptions = {
     autoplay: true,
     controls: true,
@@ -43,11 +42,9 @@ const ViewingScreen = () => {
   };
 
   return (
-    <Box component="section" sx={{ height: "100%" }}>
+    <Box component="section" sx={{ height: "100%", mt: 20 }}>
       <Box
         sx={{
-          m: 4,
-          mb: 0,
           width: "30%",
           backgroundColor: "rgba(55, 58, 64, 0.6)",
           textAlign: "center",
