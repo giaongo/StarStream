@@ -62,7 +62,11 @@ const HomeScreen = () => {
       <Container sx={{ mt: 10 }}>
         <Container>
           {eventState.length <= 0 ? (
-            <Typography variant="h2" textAlign="center">
+            <Typography
+              variant="h2"
+              textAlign="center"
+              sx={{ color: "red", textShadow: "0.3px 0.2px 1px #000" }}
+            >
               No events found!
             </Typography>
           ) : eventState.length === 1 ? (

@@ -59,6 +59,7 @@ function App() {
     fontFamily: "Iceland, sans-serif",
     fontWeight: "400",
     marginTop: "50px",
+    textShadow: "1px 0.5px 2px #fff",
     "@media (min-width:600px)": {
       fontSize: "2.75rem",
     },
