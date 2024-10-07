@@ -48,8 +48,7 @@ services:
       - "8443:8443"
     env_file: ./nms/.env
     volumes:
-      - ./nms:/nms
-      - /nms/node_modules
+      - ./nms/media:/nms/media:rw
     container_name: nms
 
 volumes:

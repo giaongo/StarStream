@@ -22,16 +22,16 @@ const config = {
   http: {
     port: 8000,
     allow_origin: "*",
-    mediaroot: "./media",
-    api: true,
+    mediaroot: "./media"
   },
   trans: {
     ffmpeg: "/usr/bin/ffmpeg",
     tasks: [
       {
         app: "live",
+        ac: 'aac',
         mp4: true,
-        mp4Flags: "[movflags=flag_keyframe+empty_moov]",
+        mp4Flags: '[movflags=faststart]',
         hls: true,
         hlsFlags:
           "[hls_time=1:hls_list_size=3:hls_flags=delete_segments+omit_endlist]",
@@ -73,7 +73,7 @@ const uploadAndRemove = async (video_path) => {
               filePath
             );
 
-            // upload video information to database
+            // // upload video information to database
             const uploadToDBResult = await uploadVideoInfoToDB(
               `${cdnUrl}/${combined_name}`,
               streaming_key,
@@ -81,26 +81,26 @@ const uploadAndRemove = async (video_path) => {
             );
 
             // Remove file from local storage if upload to AWS S3 and database is successful
-            // if (
-            //   uploadAWSResult &&
-            //   uploadToDBResult &&
-            //   fs.existsSync(filePath)
-            // ) {
-            //   // Remove file from local storage
-            //   fs.unlink(filePath, (err) => {
-            //     if (err) {
-            //       throw new Error("Error deleting file ", err);
-            //     }
-            //   });
-            //   // Remove folder from local storage
-            //   if (fs.existsSync(video_path)) {
-            //     fs.rm(video_path, { recursive: true }, (err) => {
-            //       if (err) {
-            //         throw new Error("Error deleting folder ", err);
-            //       }
-            //     });
-            //   }
-            // }
+            if (
+              uploadAWSResult &&
+              uploadToDBResult &&
+              fs.existsSync(filePath)
+            ) {
+              // Remove file from local storage
+              fs.unlink(filePath, (err) => {
+                if (err) {
+                  throw new Error("Error deleting file ", err);
+                }
+              });
+              // Remove folder from local storage
+              if (fs.existsSync(video_path)) {
+                fs.rm(video_path, { recursive: true }, (err) => {
+                  if (err) {
+                    throw new Error("Error deleting folder ", err);
+                  }
+                });
+              }
+            }
             console.log("Upload and remove successful");
           } catch (error) {
             console.error("Error uploading file to AWS S3 ", error);
