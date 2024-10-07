@@ -59,7 +59,7 @@ const Chat = ({ eventId }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: { xs: "50%", md: "90%" },
+        height: { xs: "50%", md: "83%" },
       }}
     >
       <List

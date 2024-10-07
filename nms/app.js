@@ -118,7 +118,6 @@ const uploadAndRemove = async (video_path) => {
  * @returns
  */
 const uploadVideoInfoToDB = async (video_url, streaming_key, combined_name) => {
-  console.log("url is ", baseUrl + "/events/archives");
   try {
     axios.post(baseUrl + "/events/archives", {
       video_url,

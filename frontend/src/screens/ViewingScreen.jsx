@@ -42,11 +42,9 @@ const ViewingScreen = () => {
   };
 
   return (
-    <Box component="section" sx={{ height: "100%" }}>
+    <Box component="section" sx={{ height: "100%", mt: 20 }}>
       <Box
         sx={{
-          m: 4,
-          mb: 0,
           width: "30%",
           backgroundColor: "rgba(55, 58, 64, 0.6)",
           textAlign: "center",
