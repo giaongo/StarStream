@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import VideoArchive from "../components/VideoArchive";
 import { Box, IconButton, Typography } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
@@ -41,7 +41,7 @@ const VideoArchiveList = ({ videos, title }) => {
   });
 
   return (
-    <Box className="video-archive-container" sx={{ mt: 12 }}>
+    <Box className="video-archive-container" sx={{ mt: 20, mb: 20 }}>
       <Box
         sx={{
           alignSelf: "flex-start",
