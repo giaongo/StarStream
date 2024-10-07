@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, CardMedia, Container, Typography } from "@mui/material";
 import videojs from "video.js";
 import VideoJS from "../components/VideoJS";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
-
+import { baseUrl } from "../utils/variables";
 const ViewingArchiveScreen = () => {
   const playerRef = useRef(null);
   const location = useLocation();
   const videoInfo = location.state?.video;
-
+  const startDate = new Date(videoInfo?.event_start_date);
+  const endDate = new Date(videoInfo?.event_end_date);
   const videoJsOptions = {
     autoplay: true,
     controls: true,
@@ -18,7 +19,7 @@ const ViewingArchiveScreen = () => {
     experimentalSvgIcons: true,
     sources: [
       {
-        src: "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4",
+        src: videoInfo?.video_path,
         type: "video/mp4",
       },
     ],
@@ -41,15 +42,54 @@ const ViewingArchiveScreen = () => {
     <Box
       sx={{
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
+        alignItems: "center",
         mt: 20,
       }}
     >
-      <Box sx={{ flexBasis: "20%", backgroundColor: "rgba(43, 43, 43, 0.5)" }}>
-        <Typography variant="h2">{videoInfo?.title}</Typography>
+      <Box
+        sx={{
+          width: "60%",
+          backgroundColor: "rgba(43, 43, 43, 0.5)",
+          display: "flex",
+        }}
+      >
+        <Box>
+          <CardMedia
+            component="img"
+            sx={{
+              order: { xs: 1, sm: 2 },
+              width: { xs: "50px", sm: "200px" },
+              height: { xs: "50px", sm: "200px" },
+              margin: "30px",
+              objectFit: "cover",
+              borderRadius: "5px",
+              boxShadow:
+                "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+            }}
+            src={`${baseUrl}/events/thumbnail/${videoInfo?.event_image}`}
+            alt={videoInfo?.event_image}
+          />
+        </Box>
+        <Box>
+          <Typography variant="h2" sx={{ ml: 0 }}>
+            {videoInfo?.title}
+          </Typography>
+          <Typography variant="subtitle1" component="div">
+            <b>Start Date:</b> {startDate.toDateString()}
+          </Typography>
+          <Typography variant="subtitle1" component="div">
+            <b>End Date:</b> {endDate.toDateString()}
+          </Typography>
+          <Typography variant="subtitle1" component="div">
+            <b>From:</b> {startDate.toLocaleTimeString()} - <b>To: </b>{" "}
+            {endDate.toLocaleTimeString()}
+          </Typography>
+        </Box>
       </Box>
 
-      <Box sx={{ width: "50%" }}>
+      <Box sx={{ width: "60%", mb: 12 }}>
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
       </Box>
     </Box>
