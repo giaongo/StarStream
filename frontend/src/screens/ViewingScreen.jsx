@@ -1,45 +1,16 @@
-import React, { useRef } from "react";
-import VideoJS from "../components/VideoJS";
+import React from "react";
 import { Typography, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import "../styles/App.css";
-import videojs from "video.js";
 import Chat from "../components/Chat";
+import VideoFLV from "../components/VideoFLV";
 
 const ViewingScreen = () => {
-  const playerRef = useRef(null);
   const location = useLocation();
   const event = location.state?.event;
   const viewing_url = location.state?.viewing_url.url;
   const startDate = new Date(event?.start_date);
   const endDate = new Date(event?.end_date);
-
-  const videoJsOptions = {
-    autoplay: true,
-    controls: true,
-    responsive: true,
-    fluid: true,
-    experimentalSvgIcons: true,
-    sources: [
-      {
-        src: viewing_url,
-        type: "application/x-mpegURL",
-      },
-    ],
-  };
-
-  const handlePlayerReady = (player) => {
-    playerRef.current = player;
-
-    // You can handle player events here, for example:
-    player.on("waiting", () => {
-      videojs.log("player is waiting");
-    });
-
-    player.on("dispose", () => {
-      videojs.log("player will dispose");
-    });
-  };
 
   return (
     <Box component="section" sx={{ height: "100%", mt: 20 }}>
@@ -74,7 +45,12 @@ const ViewingScreen = () => {
             flexBasis: "47%",
           }}
         >
-          <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+          <VideoFLV
+            option={{
+              type: "flv",
+              url: viewing_url,
+            }}
+          />
         </Box>
 
         <Box
