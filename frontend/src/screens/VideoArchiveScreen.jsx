@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { sample_data } from "../utils/variables";
 import { Box } from "@mui/material";
 import VideoArchiveList from "../components/VideoArchiveList";
 import { useVideo } from "../hooks/ApiHooks";

@@ -39,6 +39,10 @@ const ViewingScreen = () => {
     player.on("dispose", () => {
       videojs.log("player will dispose");
     });
+
+    player.on("error", (error) => {
+      console.error("Error message:", error.message);
+    });
   };
 
   return (
