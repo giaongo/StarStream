@@ -3,8 +3,8 @@ services:
     build: ./backend
     ports:
       - "5001:5001"
-    volumes:
-      - ./backend:/backend
+    # volumes:
+    #   - ./backend:/backend
     env_file: ./backend/.env
     container_name: backend
     depends_on:
@@ -12,12 +12,12 @@ services:
           condition: service_healthy
   
   postgresql:
-    image: postgres
+    # image: postgres
+    build: ./postgres
     ports:
       - 5432:5432
     volumes:
       - persist-volume:/var/lib/postgresql/data
-      - ./postgres/db.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./backend/.env
     container_name: postgresql
@@ -28,19 +28,24 @@ services:
       retries: 5
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/frontend
-      - /frontend/node_modules
+      # - "5173:5173"
+      - 80:80
+    # volumes:
+    #   - ./frontend:/frontend
+    #   - /frontend/node_modules
     container_name: frontend
     depends_on:
       - postgresql
       - backend
 
   nms:
-    build: ./nms 
+    build:
+      context: ./nms
+      dockerfile: Dockerfile.prod
     # image: giaongo/streaming_server
     ports:
       - "1935:1935"
