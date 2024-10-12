@@ -69,7 +69,7 @@ async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
         key = await get_streaming_key(event_id)
         result = await g.connection.fetch_one("SELECT viewing_url FROM streaming_setting")
         if (key and result):
-            return f'{result["viewing_url"]}/{key}/index.m3u8'
+            return f'{result["viewing_url"]}/{key}.flv'
         else:
             return None
 
