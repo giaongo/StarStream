@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { Box, CardMedia, Container, Typography } from "@mui/material";
+import React from "react";
+import { Box, CardMedia, Typography } from "@mui/material";
 import videojs from "video.js";
 import VideoJS from "../components/VideoJS";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { baseUrl } from "../utils/variables";
+
 const ViewingArchiveScreen = () => {
   const playerRef = useRef(null);
   const location = useLocation();
