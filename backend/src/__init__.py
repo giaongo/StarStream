@@ -44,9 +44,11 @@ def create_app() -> App:
     # register routing blueprints
     from .routes.eventRoute import event
     from .routes.adminRoute import admin
+    from .routes.videoRoute import video
 
     app.register_blueprint(event, url_prefix='/events')
     app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(video, url_prefix='/video')
     return app
 
 
