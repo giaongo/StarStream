@@ -6,10 +6,13 @@ import fs from "node:fs";
 import { uploadFileToAWS } from "./awsS3Connect.js";
 import "dotenv/config";
 import axios from "axios";
-import { baseUrl, cdnUrl } from "./utils/variables.js";
+import { baseUrl, cdnUrl, whisperUrl } from "./utils/variables.js";
+import { spawn } from "node:child_process";
+import { fileFromPath } from "formdata-node/file-from-path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const mediaPath = path.join(__dirname, "media");
+const audioPath = path.join(__dirname, "audio");
 
 const config = {
   rtmp: {
@@ -46,8 +49,20 @@ var nms = new NodeMediaServer(config);
 nms.run();
 
 nms.on("donePublish", async (id, StreamPath, args) => {
-  const video_path = path.join(mediaPath, StreamPath);
-  await uploadAndRemove(video_path);
+  const streamVideoDirPath = path.join(mediaPath, StreamPath);
+  // await uploadAndRemove(video_path);
+  fs.readdir(streamVideoDirPath, async (err, files) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    files.forEach(async (file) => {
+      if (path.extname(file) === ".mp4") {
+        const streamVideoFilePath = path.join(streamVideoDirPath, file);
+        extractAudioFromVideo(streamVideoFilePath);
+      }
+    });
+  });
 });
 
 /**
@@ -67,25 +82,28 @@ const uploadAndRemove = async (video_path) => {
             const combined_name = path.join(streaming_key, file);
             const filePath = path.join(video_path, file);
 
-            // upload file to AWS S3
-            const uploadAWSResult = await uploadFileToAWS(
-              combined_name,
-              filePath
-            );
-
-            // // upload video information to database
+            // upload video information to database
             const uploadToDBResult = await uploadVideoInfoToDB(
               `${cdnUrl}/${combined_name}`,
               streaming_key,
               combined_name
             );
 
+            if (!uploadToDBResult) {
+              throw new Error("Error uploading video information to database");
+            }
+
+            // upload file to AWS S3
+            const uploadAWSResult = await uploadFileToAWS(
+              combined_name,
+              filePath
+            );
+            if (!uploadAWSResult) {
+              throw new Error("Error uploading video to AWS S3");
+            }
+
             // Remove file from local storage if upload to AWS S3 and database is successful
-            if (
-              uploadAWSResult &&
-              uploadToDBResult &&
-              fs.existsSync(filePath)
-            ) {
+            if (fs.existsSync(filePath)) {
               // Remove file from local storage
               fs.unlink(filePath, (err) => {
                 if (err) {
@@ -103,7 +121,7 @@ const uploadAndRemove = async (video_path) => {
             }
             console.log("Upload and remove successful");
           } catch (error) {
-            console.error("Error uploading file to AWS S3 ", error);
+            console.error("Error uploading and remove file: ", error);
           }
         }
       });
@@ -128,4 +146,68 @@ const uploadVideoInfoToDB = async (video_url, streaming_key, combined_name) => {
   } catch (error) {
     throw new Error("Error uploading video information to database", error);
   }
+};
+
+/**
+ * Extract audio from video file
+ * @param {*} video_path
+ */
+const extractAudioFromVideo = (videoFilePath) => {
+  if (!fs.existsSync(audioPath)) {
+    fs.mkdirSync(audioPath);
+  }
+  const tempAudioFilePath = path.join(audioPath, "audio.mp3");
+  runShellCommand(
+    `ffmpeg -i ${videoFilePath} -q:a 0 -map a ${tempAudioFilePath}`,
+    async () => await extractSubtitleFromAudio(tempAudioFilePath)
+  );
+};
+
+/**
+ * Generate subtitle from audio file
+ * @param {*} audioFilePath
+ */
+const extractSubtitleFromAudio = async (audioFilePath) => {
+  console.log("Extracting subtitle from audio file: ", audioFilePath);
+  const formData = new FormData();
+  formData.append("audio_file", await fileFromPath(audioFilePath));
+
+  try {
+    const result = await axios.post(
+      path.join(
+        whisperUrl,
+        "asr?encode=true&task=transcribe&word_timestamps=false&output=vtt"
+      ),
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("Extract subtitle from audio successful: ", result.data);
+  } catch (error) {
+    console.error("Error extracting subtitle from audio: ", error);
+  }
+};
+
+/**
+ * Execute linux shell command
+ * @param {*} command
+ * @returns
+ */
+const runShellCommand = (command, cb) => {
+  const runCommand = spawn(command, { shell: true });
+  runCommand.stderr.on("data", (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  runCommand.on("close", async (code) => {
+    if (code === 0) {
+      console.log("Shell command executed successfully");
+      if (cb) {
+        await cb();
+      }
+    }
+  });
 };
