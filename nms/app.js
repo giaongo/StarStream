@@ -48,6 +48,7 @@ const config = {
 var nms = new NodeMediaServer(config);
 nms.run();
 
+// Call back when stream has stopped
 nms.on("donePublish", async (id, StreamPath, args) => {
   const streamVideoDirPath = path.join(mediaPath, StreamPath);
   // await uploadAndRemove(video_path);
@@ -58,8 +59,11 @@ nms.on("donePublish", async (id, StreamPath, args) => {
     }
     files.forEach(async (file) => {
       if (path.extname(file) === ".mp4") {
+        // extract audio from video after the streaming ended for 1s
         const streamVideoFilePath = path.join(streamVideoDirPath, file);
-        extractAudioFromVideo(streamVideoFilePath);
+        setTimeout(() => {
+          extractAudioFromVideo(streamVideoFilePath);
+        }, 1000);
       }
     });
   });
@@ -156,7 +160,13 @@ const extractAudioFromVideo = (videoFilePath) => {
   if (!fs.existsSync(audioPath)) {
     fs.mkdirSync(audioPath);
   }
-  const tempAudioFilePath = path.join(audioPath, "audio.mp3");
+  const tempAudioFilePath = path.join(
+    audioPath,
+    `${path.basename(videoFilePath)}.mp3`
+  );
+
+  console.log("tempAudioFilePath: ", tempAudioFilePath);
+
   runShellCommand(
     `ffmpeg -i ${videoFilePath} -q:a 0 -map a ${tempAudioFilePath}`,
     async () => await extractSubtitleFromAudio(tempAudioFilePath)
@@ -185,6 +195,15 @@ const extractSubtitleFromAudio = async (audioFilePath) => {
         },
       }
     );
+
+    // store the result into the vtt file
+    const vttFilePath = path.join(
+      audioPath,
+      `${path.basename(audioFilePath)}.vtt`
+    );
+    fs.writeFile(vttFilePath, result.data, (err) => {
+      throw new Error("Error writing subtitle to file: ", err);
+    });
     console.log("Extract subtitle from audio successful: ", result.data);
   } catch (error) {
     console.error("Error extracting subtitle from audio: ", error);
