@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS videos_archives (
     video_id SERIAL PRIMARY KEY, 
     video_path VARCHAR(255),
     key_name VARCHAR(50),
-    file_name VARCHAR(100),
+    video_file_name VARCHAR(100),
+    subtitle_path VARCHAR(255),
     CONSTRAINT fk_video
         FOREIGN KEY (key_name)
             REFERENCES events(streaming_key)
@@ -46,18 +47,18 @@ INSERT INTO events (title, event_start_date, event_end_date, event_image, stream
 INSERT INTO events (title, event_start_date, event_end_date, event_image, streaming_key) VALUES ('ONUG Spring', '2024-05-15 19:00:00', '2024-5-15 22:00:00', 'sample12.jpg', 'sample12');
 
 /* 12 samples video archives*/
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample1v.mp4', 'sample1', 'samples/sample1v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample2v.mp4', 'sample2', 'samples/sample2v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample3v.mp4', 'sample3', 'samples/sample3v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample4v.mp4', 'sample4', 'samples/sample4v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample5v.mp4', 'sample5', 'samples/sample5v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample6v.mp4', 'sample6', 'samples/sample6v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample7v.mp4', 'sample7', 'samples/sample7v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample8v.mp4', 'sample8', 'samples/sample8v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample9v.mp4', 'sample9', 'samples/sample9v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample10v.mp4', 'sample10', 'samples/sample10v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample11v.mp4', 'sample11', 'samples/sample11v.mp4');
-INSERT INTO videos_archives (video_path, key_name, file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample12v.mp4', 'sample12', 'samples/sample12v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample1v.mp4', 'sample1', 'samples/sample1v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample2v.mp4', 'sample2', 'samples/sample2v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample3v.mp4', 'sample3', 'samples/sample3v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample4v.mp4', 'sample4', 'samples/sample4v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample5v.mp4', 'sample5', 'samples/sample5v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample6v.mp4', 'sample6', 'samples/sample6v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample7v.mp4', 'sample7', 'samples/sample7v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample8v.mp4', 'sample8', 'samples/sample8v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample9v.mp4', 'sample9', 'samples/sample9v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample10v.mp4', 'sample10', 'samples/sample10v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample11v.mp4', 'sample11', 'samples/sample11v.mp4');
+INSERT INTO videos_archives (video_path, key_name, video_file_name) VALUES ('https://d2svo8w7e6o53b.cloudfront.net/samples/sample12v.mp4', 'sample12', 'samples/sample12v.mp4');
 
 
 ALTER DATABASE starstream_db SET TIMEZONE TO  'posix/Europe/Helsinki';              
