@@ -6,23 +6,15 @@ import fs from "node:fs";
  * @param {*} filePath
  * @param {*} folderPath
  */
-const clearTemp = (filePath, folderPath) => {
+const clearTemp = (folderPath, filePath) => {
   try {
-    if (fs.existsSync(filePath)) {
-      // Remove file from local storage
-      fs.unlink(filePath, (err) => {
+    // Remove folder from local storage
+    if (fs.existsSync(folderPath)) {
+      fs.rm(folderPath, { recursive: true, force: true }, (err) => {
         if (err) {
-          throw new Error("Error deleting file ", err);
+          throw new Error("Error deleting folder ", err);
         }
       });
-      // Remove folder from local storage
-      if (fs.existsSync(folderPath)) {
-        fs.rm(folderPath, { recursive: true }, (err) => {
-          if (err) {
-            throw new Error("Error deleting folder ", err);
-          }
-        });
-      }
     }
   } catch (error) {
     console.error("Error clearing temp files: ", error);
