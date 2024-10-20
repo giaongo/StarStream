@@ -38,15 +38,24 @@ const TopAppBar = (props) => {
   const [showNavbar, setShowNavbar] = useState(true);
 
   // Define navItems dynamically based on user status
-  const navItems = [
+  let navItems = [
     { label: "Home", icon: <Home />, route: "/" },
     { label: "Archive", icon: <OndemandVideo />, route: "/archive" },
-    { label: "Admin Login", icon: <ManageAccounts />, route: "/admin/login" },
   ];
 
   // If the user is an admin, add the "Logout" option
   if (user.isAdmin) {
-    navItems.push({ label: "Logout", icon: <ManageAccounts />, action: () => dispatch(logoutAndRemoveAdmin()) });
+    navItems = navItems.slice(0, 2).concat({
+      label: "Logout",
+      icon: <ManageAccounts />,
+      action: () => dispatch(logoutAndRemoveAdmin()),
+    });
+  } else {
+    navItems = navItems.slice(0, 2).concat({
+      label: "Admin Login",
+      icon: <ManageAccounts />,
+      route: "/admin/login",
+    });
   }
 
   const handleDrawerToggle = () => {
@@ -124,7 +133,8 @@ const TopAppBar = (props) => {
             width: "100%",
             left: 0,
             right: 0,
-            background: "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(135, 206, 250, 0.8) 100%)",
+            background:
+              "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(135, 206, 250, 0.8) 100%)",
             boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
             borderRadius: "0",
           }}
@@ -150,7 +160,12 @@ const TopAppBar = (props) => {
               </Typography>
 
               {isMobile ? (
-                <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: { xs: "flex", md: "none" },
+                    alignItems: "center",
+                  }}
+                >
                   <IconButton
                     color="inherit"
                     edge="start"
@@ -205,7 +220,8 @@ const TopAppBar = (props) => {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              background: "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(135, 206, 250, 0.8) 100%)",
+              background:
+                "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(135, 206, 250, 0.8) 100%)",
               color: "white",
             },
           }}

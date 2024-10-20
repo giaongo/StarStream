@@ -162,6 +162,8 @@ const extractSubtitleFromAudio = async (audioFilePath) => {
       `${path.parse(audioFilePath).name}.vtt`
     );
 
+    console.log("Extracting result ", result);
+
     // write the result to vtt file
     fs.writeFileSync(vttFilePath, result.data, (err) => {
       if (err) {
@@ -190,7 +192,7 @@ const uploadVideoInfoToDB = async (
   subtitle_url
 ) => {
   try {
-    axios.post(baseUrl + "/events/archives", {
+    await axios.post(baseUrl + "/events/archives", {
       video_url,
       streaming_key,
       combined_name,

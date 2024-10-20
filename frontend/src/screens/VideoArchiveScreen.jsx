@@ -21,6 +21,7 @@ const VideoArchiveScreen = () => {
       try {
         const archives = (await getArchives()).archives;
         const archivesLength = archives.length;
+
         dispatch(
           addArchives({
             popularStream: archives.slice(

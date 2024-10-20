@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Box, CardMedia, Typography } from "@mui/material";
 import videojs from "video.js";
 import VideoJS from "../components/VideoJS";
@@ -12,6 +12,7 @@ const ViewingArchiveScreen = () => {
   const videoInfo = location.state?.video;
   const startDate = new Date(videoInfo?.event_start_date);
   const endDate = new Date(videoInfo?.event_end_date);
+  console.log("video Infor ", videoInfo?.subtitle_path);
   const videoJsOptions = {
     autoplay: true,
     controls: true,
@@ -22,6 +23,15 @@ const ViewingArchiveScreen = () => {
       {
         src: videoInfo?.video_path,
         type: "video/mp4",
+      },
+    ],
+    tracks: [
+      {
+        src: videoInfo?.subtitle_path,
+        kind: "subtitles",
+        srclang: "en",
+        label: "English",
+        default: true,
       },
     ],
   };
