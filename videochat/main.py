@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .src.routers import video
+from .src.routers import videoRouter
 app = FastAPI()
 
 origins = ["*"]
@@ -13,4 +13,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(video.router)
+app.include_router(videoRouter.router)
