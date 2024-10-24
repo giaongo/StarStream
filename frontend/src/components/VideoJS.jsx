@@ -42,7 +42,7 @@ const VideoJS = (props) => {
 
   return (
     <Box data-vjs-player sx={{ flex: 1 }}>
-      <Box ref={videoRef} />
+      <Box ref={videoRef}></Box>
     </Box>
   );
 };

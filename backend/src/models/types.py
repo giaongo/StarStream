@@ -36,7 +36,8 @@ class VideoArchive:
     streaming_key: str
     video_id: int
     video_path: str
-    file_name: str
+    video_file_name: str
+    subtitle_path: str
 
 
 class LoginForm(Form):
