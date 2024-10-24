@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter(
     prefix="/video",
@@ -7,6 +8,11 @@ router = APIRouter(
 )
 
 
+class VideoInfo(BaseModel):
+    video_url: str
+    subtitle_url: str
+
+
 @router.post("/")
-async def upload_video_info():
-    return {"message": "Video information received"}
+async def process_video_info(video_info: VideoInfo):
+    return {"message": f"Information received ${video_info.video_url} and ${video_info.subtitle_url}"}
