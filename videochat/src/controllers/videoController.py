@@ -5,6 +5,8 @@ from urllib.request import urlretrieve
 import webvtt
 import cv2
 import json
+from .helpers import full_data_to_embedding
+import pandas as pd
 
 
 class VideoExtractedMetadata:
@@ -43,13 +45,13 @@ def retrieve_url_to_local_file(video_path: str, video_url: str, vtt_url: str) ->
         stored_vtt_file = urlretrieve(vtt_url, os.path.join(
             extracted_video_dir_path, vtt_file_name))
 
-        return stored_video_file, stored_vtt_file, extracted_video_dir_path
+        return stored_video_file[0], stored_vtt_file[0], extracted_video_dir_path
     except Exception as err:
         raise Exception(f'Error retrieving urls to local file {err}')
 
 
 def str_to_time_in_ms(text: str) -> float:
-    """convert str time to float 
+    """convert str time to float
 
     Args:
         text (str): text of time in format HH:MM:SS
@@ -63,6 +65,17 @@ def str_to_time_in_ms(text: str) -> float:
 
 
 def maintain_aspect_ratio_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
+    """Resize image ratio
+
+    Args:
+        image (_type_): 
+        width (_type_, optional): Defaults to None.
+        height (_type_, optional):Defaults to None.
+        inter (_type_, optional): Defaults to cv2.INTER_AREA.
+
+    Returns:
+        _type_: resized image
+    """
     # Grab the image size and initialize dimensions
     dim = None
     (h, w) = image.shape[:2]
@@ -86,7 +99,7 @@ def maintain_aspect_ratio_resize(image, width=None, height=None, inter=cv2.INTER
     return cv2.resize(image, dim, interpolation=inter)
 
 
-def process_video_subtitle(video_path: str, vtt_path: str, path_to_save_extracted_frame: str) -> List[dict]:
+def process_video_subtitle_to_metadata(video_path: str, vtt_path: str, path_to_save_extracted_frame: str) -> List[dict]:
     """ Generate metadata from video and subtitle
 
     Args:
@@ -100,7 +113,9 @@ def process_video_subtitle(video_path: str, vtt_path: str, path_to_save_extracte
     Returns:
         List[dict]: list of metadata
     """
+    # create folder to store metadata
 
+    Path(path_to_save_extracted_frame).mkdir(exist_ok=True, parents=True)
     metadata = []
 
     try:
@@ -146,7 +161,7 @@ def process_video_subtitle(video_path: str, vtt_path: str, path_to_save_extracte
         return metadata
 
     except Exception as err:
-        raise Exception(f'Error processing video subtitle {err}')
+        raise Exception(f'Error processing video subtitle to metadata {err}')
 
 
 def store_metadata_to_local_file(metadata: list[dict], path_to_save_metadata: str):
@@ -161,26 +176,53 @@ def store_metadata_to_local_file(metadata: list[dict], path_to_save_metadata: st
 
     """
     try:
-        print("Type is ", type(metadata))
         with open(path_to_save_metadata, "w") as file:
             json.dump(metadata, file)
     except Exception as err:
         raise Exception(f'Error storing metadata {err}')
 
 
-# result = process_vtt(vtt_path="videos/communication/2024-10-20-13-26-49.vtt")
-# for data in result:
-#     print("transcript start ", str_to_time_in_ms(data.start))
-#     print("transcript end ", str_to_time_in_ms(data.end))
-#     print("transcript data ", data.text)
+def adjust_vid_transcription(adjust_level: int, metadata: List[dict]) -> List[dict]:
+    """ Adjust video transcription with more meaningful text by joining the text of the previous and next adjust_level/2
 
-result = process_video_subtitle(video_path="./videos/communication/2024-10-20-13-26-49.mp4",
-                                vtt_path="./videos/communication/2024-10-20-13-26-49.vtt",
-                                path_to_save_extracted_frame="./videos/communication/proccessed_data")
+    Args:
+        adjust_level (int): a level to adjust the transcription
+        metadata (List[dict]): metadata to adjust
 
-try:
-    Path("./videos/communication/proccessed_data").mkdir(exist_ok=True, parents=True)
-    store_metadata_to_local_file(metadata=result,
-                                 path_to_save_metadata="./videos/communication/proccessed_data/metadata.json")
-except Exception as err:
-    print(f"Error storing metadata {err}")
+    Returns:
+        List[dict]: adjusted metadata
+    """
+    # get list of transcript
+    transcripts = [data["transcript"] for data in metadata]
+    new_transcripts = [''.join(transcripts[i - int(adjust_level / 2): i + int(adjust_level / 2)]) if i - int(adjust_level / 2) >= 0
+                       else ''.join(transcripts[0: i + int(adjust_level/2)])
+                       for i in range(len(transcripts))]
+
+    # # update metadata with new transcript
+    for i, data in enumerate(metadata):
+        data["transcript"] = new_transcripts[i]
+    return metadata
+
+
+# this is for /video/process
+def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_result: List[dict]):
+    try:
+
+        # adjust transcript in metadata
+        adjusted_metadata = adjust_vid_transcription(
+            adjust_level=5, metadata=metadata_result)
+
+        # store metadata to local file
+        store_metadata_to_local_file(metadata=adjusted_metadata,
+                                     path_to_save_metadata=os.path.join(path_to_save_extracted_frame, "metadata.json"))
+
+        # generate embeddings for images and text
+        for index, data in enumerate(adjusted_metadata):
+            print(f"Index {index}")
+            embedding = full_data_to_embedding(
+                imagePath=data["extracted_image_path"], text=data["transcript"])
+            print(f"Embedding is {embedding}")
+
+    except Exception as err:
+        print(f"Error processing image and text embeddings {err}")
+        raise Exception(f"Error processing image and text embeddings {err}")
