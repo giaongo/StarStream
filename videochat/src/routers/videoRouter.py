@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import os
 from pathlib import Path
-
+import pandas as pd
 from ..controllers.videoController import process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata
 
 router = APIRouter(
@@ -12,6 +12,8 @@ router = APIRouter(
 )
 video_path = os.path.join(os.getcwd(), "videos")
 Path(video_path).mkdir(exist_ok=True, parents=True)
+columns = ["image_path", "transcript", "embeddings"]
+dataframe = pd.DataFrame(columns=columns)
 
 
 class VideoInfo(BaseModel):

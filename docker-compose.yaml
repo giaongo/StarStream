@@ -65,5 +65,14 @@ services:
       - ./nms/model:/root/.cache/whisper
     container_name: whisper
 
+  video_chat: 
+    build: ./videochat
+    ports: 
+      "5002:5002"
+    volumes:
+      - ./videochat/src:/videochat/src
+    container_name: video_chat
+
+
 volumes:
   persist-volume:

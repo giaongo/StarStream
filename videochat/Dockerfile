@@ -2,15 +2,15 @@ FROM python:3.10-slim
 
 WORKDIR /videochat
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --no-cache-dir --upgrade pip
 
 RUN apt-get update && apt-get install -y git
 
 COPY ./ImageBind ./ImageBind
 
-RUN python -m pip install --default-timeout=100 ./ImageBind
+RUN python -m pip install --default-timeout=100 --no-cache-dir ./ImageBind
 
-RUN cd ./ImageBind && python -m vtk==9.2.4 git+https://github.com/enthought/mayavi.git@master
+RUN cd ./ImageBind && python -m pip install --no-cache-dir vtk==9.2.4 git+https://github.com/enthought/mayavi.git@master
 
 COPY requirements.txt .
 
