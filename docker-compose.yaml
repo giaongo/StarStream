@@ -73,6 +73,7 @@ services:
       - ./videochat/src:/videochat/src
       - ./videochat/videos:/videochat/videos
       - ./videochat/.checkpoints:/videochat/.checkpoints
+    env_file: ./videochat/.env
     container_name: video_chat
 
 
