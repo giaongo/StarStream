@@ -4,9 +4,8 @@ WORKDIR /videochat
 
 RUN python -m pip install --no-cache-dir --upgrade pip \ 
     && apt-get update && apt-get install libgl1 -y \ 
-    && apt-get install libgeos++-dev libproj-dev -y
-
-RUN apt-get update && apt-get install -y git \
+    && apt-get install libgeos++-dev libproj-dev -y \
+    && apt-get update && apt-get install -y git \
     && python3 -m pip install --no-cache-dir vtk \
     && python3 -m pip install --no-cache-dir pyqt5
 
