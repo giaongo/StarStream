@@ -19,3 +19,4 @@ ImageBind/.assets
 ImageBind/__pycache__
 ImageBind/*/__pycache__
 ImageBind/.gitignore
+.env

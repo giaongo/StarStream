@@ -7,6 +7,25 @@ import cv2
 import json
 from .helpers import full_data_to_embedding
 import pandas as pd
+from dotenv import load_dotenv, find_dotenv
+import kdbai_client as kdbai
+
+load_dotenv(find_dotenv())
+KDB_ENDPOINT = os.getenv("KDB_ENDPOINT_URL")
+KDB_API_KEY = os.getenv("KDB_API_KEY")
+table_schema = [
+    {"name": "image_path", "type": "str"},
+    {"name": "transcript", "type": "str"},
+    # {
+    #     "name": "embeddings",
+    #     "pytype": "float64",
+    #     "vectorIndex": {"dims": 1024, "metric": "CS", "type": "flat"},
+    # },
+]
+
+indexes = [
+
+]
 
 
 class VideoExtractedMetadata:
@@ -204,9 +223,23 @@ def adjust_vid_transcription(adjust_level: int, metadata: List[dict]) -> List[di
     return metadata
 
 
-# this is for /video/process
-def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_result: List[dict]):
+def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_result: List[dict]) -> pd.DataFrame:
+    """ Process image and text embeddings and return a dataframe storing info of each frame of a video
+
+    Args:
+        path_to_save_extracted_frame (str)
+        metadata_result (List[dict])
+
+    Raises:
+        Exception
+
+    Returns:
+        pd.DataFrame
+    """
     try:
+        # create empty dataframe
+        columns = ["image_path", "transcript", "embeddings"]
+        dataframe = pd.DataFrame(columns=columns)
 
         # adjust transcript in metadata
         adjusted_metadata = adjust_vid_transcription(
@@ -221,8 +254,55 @@ def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_re
             print(f"Index {index}")
             embedding = full_data_to_embedding(
                 imagePath=data["extracted_image_path"], text=data["transcript"])
-            print(f"Embedding is {embedding}")
 
+            new_row = pd.DataFrame([{
+                "image_path": data["extracted_image_path"],
+                "transcript": data["transcript"],
+                "embeddings": embedding}])
+
+            pd.concat([dataframe, new_row], ignore_index=True)
+        return dataframe
     except Exception as err:
-        print(f"Error processing image and text embeddings {err}")
         raise Exception(f"Error processing image and text embeddings {err}")
+
+
+def table_exists(table_name: str, session: kdbai.Session) -> bool:
+    """ Check if table exists in KDB.AI Vector Database
+
+    Args:
+        table_name (str)
+
+    Raises:
+        Exception
+
+    Returns:
+        bool
+    """
+    try:
+        database = session.database("default")
+        database.table(table=table_name)
+        return True
+    except Exception as err:
+        return False
+
+
+def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: kdbai.Session) -> dict:
+    """ Insert dataframe to KDB.AI Vector Database
+
+    Args:
+        table_name (str): table name
+        dataframe (pd.DataFrame): uploaded dataframe
+        session (kdbai.Session): session to connect to KDB.AI Vector Database
+
+    Raises:
+        Exception
+
+    Returns:
+        dict:  result of the upload
+    """
+    try:
+        database = session.database("default")
+        table = database.create_table(table_name, table_schema)
+        return table.insert(dataframe)
+    except Exception as err:
+        raise Exception(f"Error uploading dataframe to KDB {err}")

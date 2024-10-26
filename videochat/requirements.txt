@@ -4,3 +4,5 @@ webvtt-py
 opencv-python
 uvicorn[standard]
 pandas
+python-dotenv
+kdbai-client
