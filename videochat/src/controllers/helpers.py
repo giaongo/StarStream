@@ -4,7 +4,6 @@ from ImageBind.imagebind import data
 from .variables import ml_models
 import torch
 import json
-import numpy as np
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -37,7 +36,7 @@ def read_metadata_from_file(file_path: str) -> List[dict]:
     return metadata
 
 
-def get_embedding_vector(inputs: object) -> np.ndarray | None:
+def get_embedding_vector(inputs: object):
     """ Get the embedding vector
 
     Args:
@@ -62,7 +61,7 @@ def get_embedding_vector(inputs: object) -> np.ndarray | None:
         raise Exception(f"Error at get_embedding_vector {err}")
 
 
-def full_data_to_embedding(imagePath: str, text: str) -> np.ndarray | None:
+def full_data_to_embedding(imagePath: str, text: str):
     """Collect metadata input for imagebind model
 
     Args:
