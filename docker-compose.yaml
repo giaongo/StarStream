@@ -71,10 +71,10 @@ services:
       - "5002:5002"
     volumes:
       - ./videochat/src:/videochat/src
-      - persist-imagebind-model:/videochat/.checkpoints
+      - ./videochat/videos:/videochat/videos
+      - ./videochat/.checkpoints:/videochat/.checkpoints
     container_name: video_chat
 
 
 volumes:
   persist-volume:
-  persist-imagebind-model:

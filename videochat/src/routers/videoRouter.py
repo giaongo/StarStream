@@ -45,3 +45,8 @@ async def process_video_info(video_info: VideoInfo):
         print(f"Error processing video {err}")
         raise HTTPException(
             status_code=400, detail="Error processing video info")
+
+
+@router.get("/greet")
+async def greeting():
+    return {"message": "Hello World"}

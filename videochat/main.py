@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.controllers.helpers import init_image_bind
-from src.routers import videoRouter
+from .src.controllers.helpers import init_image_bind
+from .src.routers import videoRouter
 from contextlib import asynccontextmanager
-import uvicorn
-from src.controllers.variables import ml_models
+from .src.controllers.variables import ml_models
 origins = ["*"]
 
 
@@ -28,6 +27,3 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(videoRouter.router)
-
-if __name__ == '__main__':
-    uvicorn.run("main:app", port=5002, reload=True)

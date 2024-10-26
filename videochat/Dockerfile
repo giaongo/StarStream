@@ -21,4 +21,4 @@ COPY . .
 
 EXPOSE 5002
 
-CMD [ "python", "main.py" ]
+CMD ["fastapi", "run", "main.py", "--port", "5002"]

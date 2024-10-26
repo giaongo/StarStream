@@ -1,6 +1,6 @@
 from typing import List
-from ImageBind.imagebind.models import imagebind_model
-from ImageBind.imagebind import data
+from ...ImageBind.imagebind.models import imagebind_model
+from ...ImageBind.imagebind import data
 from .variables import ml_models
 import torch
 import json

@@ -1,5 +1,4 @@
 __pycache__
-.checkpoints
 .venv
 src/*/_pycache_
 videos
