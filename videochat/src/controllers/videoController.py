@@ -9,6 +9,7 @@ from .helpers import full_data_to_embedding
 import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import kdbai_client as kdbai
+from tqdm import tqdm
 
 load_dotenv(find_dotenv())
 KDB_ENDPOINT = os.getenv("KDB_ENDPOINT_URL")
@@ -16,15 +17,19 @@ KDB_API_KEY = os.getenv("KDB_API_KEY")
 table_schema = [
     {"name": "image_path", "type": "str"},
     {"name": "transcript", "type": "str"},
-    # {
-    #     "name": "embeddings",
-    #     "pytype": "float64",
-    #     "vectorIndex": {"dims": 1024, "metric": "CS", "type": "flat"},
-    # },
+    {
+        "name": "embeddings",
+        "type": "float64s"
+    },
 ]
 
 indexes = [
-
+    {
+        "name": "vectorIndex",
+        "type": "flat",
+        "column": "embeddings",
+        "params": {"dims": 1024, "metric": "CS"}
+    }
 ]
 
 
@@ -250,8 +255,7 @@ def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_re
                                      path_to_save_metadata=os.path.join(path_to_save_extracted_frame, "metadata.json"))
 
         # generate embeddings for images and text
-        for index, data in enumerate(adjusted_metadata):
-            print(f"Index {index}")
+        for _, data in enumerate(adjusted_metadata):
             embedding = full_data_to_embedding(
                 imagePath=data["extracted_image_path"], text=data["transcript"])
 
@@ -260,7 +264,7 @@ def process_image_text_embeddings(path_to_save_extracted_frame: str, metadata_re
                 "transcript": data["transcript"],
                 "embeddings": embedding}])
 
-            pd.concat([dataframe, new_row], ignore_index=True)
+            dataframe = pd.concat([dataframe, new_row], ignore_index=True)
         return dataframe
     except Exception as err:
         raise Exception(f"Error processing image and text embeddings {err}")
@@ -286,7 +290,7 @@ def table_exists(table_name: str, session: kdbai.Session) -> bool:
         return False
 
 
-def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: kdbai.Session) -> dict:
+def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: kdbai.Session) -> bool:
     """ Insert dataframe to KDB.AI Vector Database
 
     Args:
@@ -302,7 +306,11 @@ def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: k
     """
     try:
         database = session.database("default")
-        table = database.create_table(table_name, table_schema)
-        return table.insert(dataframe)
+        table = database.create_table(table_name, table_schema, indexes)
+        chunk_row = 100
+
+        for i in tqdm(range(0, dataframe.shape[0], chunk_row)):
+            table.insert(dataframe[i:i+chunk_row].reset_index(drop=True))
+        return True
     except Exception as err:
         raise Exception(f"Error uploading dataframe to KDB {err}")

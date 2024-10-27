@@ -52,7 +52,6 @@ def get_embedding_vector(inputs: object):
     try:
         with torch.no_grad():
             embedding_result = ml_models["imagebind"](inputs)
-            print("embedding result is ", embedding_result)
         for _, value in embedding_result.items():
             vec = value.reshape(-1)
             vec = vec.numpy()
