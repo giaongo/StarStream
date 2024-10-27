@@ -4,6 +4,7 @@ from ...ImageBind.imagebind import data
 from .variables import ml_models
 import torch
 import json
+import numpy as np
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -85,7 +86,7 @@ def full_data_to_embedding(imagePath: str, text: str):
         raise Exception(f"Error at full_data_to_embedding {err}")
 
 
-def prompt_text_to_embedding(prompt: str):
+def prompt_text_to_embedding(prompt: str) -> np.ndarray:
     """ Retrieve embedding vector from prompt text
 
     Args:

@@ -1,17 +1,20 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, WebSocket, Request
 from pydantic import BaseModel
 import os
 from pathlib import Path
-from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, table_exists
+from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, similarity_search, table_exists
 from ..controllers.videoController import upload_dataframe_to_KDB
 import kdbai_client as kdbai
 import pandas as pd
 from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse
+from ..controllers.helpers import prompt_text_to_embedding
+import numpy as np
 
 router = APIRouter(
     prefix="/video",
     tags=["video_archives"],
-    responses={404: {"msg": "Not found"}},
+    responses={404: {"msg": "Not found"}}
 )
 video_path = os.path.join(os.getcwd(), "videos")
 Path(video_path).mkdir(exist_ok=True, parents=True)
@@ -81,7 +84,87 @@ async def check_and_process_video_info(video_info: VideoInfo):
         raise HTTPException(
             status_code=400, detail="Error checking and processing video info")
 
+html = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:5002/video/ws/video_2024_10_20_13_26_49");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
+"""
 
-@router.get("/greet")
-async def greet():
-    return "Hello, this is the video archive API"
+
+@router.get("/greeting")
+async def greeting():
+    return HTMLResponse(html)
+
+
+@router.get("/search")
+async def similar_search(data: str):
+    try:
+        session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
+
+        embeddings = prompt_text_to_embedding(data)
+
+        search_formatted_embeddings = [embeddings.tolist()]
+        print(f"Formated embeddings {search_formatted_embeddings}")
+        result = similarity_search(text_embedding=search_formatted_embeddings,
+                                   table_name="video_2024_10_20_13_26_49", session=session)
+        print(f"Result of frame", result[0]["transcript"])
+        print(f"Result of frame", result[0]["image_path"])
+        return {"msg": result[0]["image_path"]}
+    except Exception as err:
+        print(f"Error at similar_search {err}")
+        raise HTTPException(status_code=400, detail="Error at similar_search")
+
+
+# @router.websocket("/ws/{table_name}")
+# async def websocket_videochat(websocket: WebSocket, table_name: str):
+#     try:
+#         await websocket.accept()
+#         session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
+#         while True:
+#             try:
+
+#                 data = await websocket.receive_text()
+#                 embeddings = [prompt_text_to_embedding(data).tolist()]
+#                 result = similarity_search(
+#                     text_embedding=embeddings, table_name=table_name, session=session)
+
+#                 await websocket.send_text(f"Message text was: {embeddings}")
+#             except Exception as err:
+#                 print(f"Error at websocket_videochat {err}")
+#                 break
+#     except Exception as err:
+#         print(f"Error at websocket_endpoint {err}")
+#         await websocket.close()
+#         raise HTTPException(
+#             status_code=400, detail="Error at websocket_endpoint")
+#     finally:
+#         print("Closing the session")
+#         session.close()

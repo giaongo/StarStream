@@ -319,7 +319,7 @@ def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: k
         raise Exception(f"Error uploading dataframe to KDB {err}")
 
 
-def similarity_search(text_embedding: np.ndarray, session: kdbai.Session, table_name: str) -> pd.DataFrame:
+def similarity_search(text_embedding: List[List], session: kdbai.Session, table_name: str) -> List[pd.DataFrame]:
     """ Search for similar result from KDB vector database
 
     Args:
@@ -329,8 +329,10 @@ def similarity_search(text_embedding: np.ndarray, session: kdbai.Session, table_
         pd.DataFrame: the result of the search
     """
     try:
-        table = session.table(table_name)
-        result_df = table.search(text_embedding, n=1)
+        table = session.database("default").table(table_name)
+        print("Text embedding", text_embedding)
+        index_name = 'vectorIndex'
+        result_df = table.search(vectors={index_name: text_embedding}, n=1)
         return result_df
     except Exception as err:
         raise Exception(f"Error at similarity_search {err}")
