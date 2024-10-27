@@ -10,6 +10,9 @@ import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 import kdbai_client as kdbai
 from tqdm import tqdm
+import numpy as np
+import pandas as pd
+import kdbai_client as kdbai
 
 load_dotenv(find_dotenv())
 KDB_ENDPOINT = os.getenv("KDB_ENDPOINT_URL")
@@ -314,3 +317,20 @@ def upload_dataframe_to_KDB(table_name: str, dataframe: pd.DataFrame, session: k
         return True
     except Exception as err:
         raise Exception(f"Error uploading dataframe to KDB {err}")
+
+
+def similarity_search(text_embedding: np.ndarray, session: kdbai.Session, table_name: str) -> pd.DataFrame:
+    """ Search for similar result from KDB vector database
+
+    Args:
+        text_embedding (_ndarray_): text embedding
+
+    Returns:
+        pd.DataFrame: the result of the search
+    """
+    try:
+        table = session.table(table_name)
+        result_df = table.search(text_embedding, n=1)
+        return result_df
+    except Exception as err:
+        raise Exception(f"Error at similarity_search {err}")

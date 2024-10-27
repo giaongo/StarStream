@@ -83,3 +83,19 @@ def full_data_to_embedding(imagePath: str, text: str):
         return get_embedding_vector(inputs)
     except Exception as err:
         raise Exception(f"Error at full_data_to_embedding {err}")
+
+
+def prompt_text_to_embedding(prompt: str):
+    """ Retrieve embedding vector from prompt text
+
+    Args:
+        prompt (str): user input
+    """
+    try:
+        inputs = {
+            imagebind_model.ModalityType.TEXT: data.load_and_transform_text([
+                                                                            prompt], device)
+        }
+        return get_embedding_vector(inputs)
+    except Exception as err:
+        raise Exception(f"Error at prompt_text_to_embedding {err}")
