@@ -135,36 +135,42 @@ async def similar_search(data: str):
         print(f"Formated embeddings {search_formatted_embeddings}")
         result = similarity_search(text_embedding=search_formatted_embeddings,
                                    table_name="video_2024_10_20_13_26_49", session=session)
-        print(f"Result of frame", result[0]["transcript"])
-        print(f"Result of frame", result[0]["image_path"])
-        return {"msg": result[0]["image_path"]}
+        return {"msg": result[0]["transcript"].iat[0]}
     except Exception as err:
         print(f"Error at similar_search {err}")
         raise HTTPException(status_code=400, detail="Error at similar_search")
 
 
-# @router.websocket("/ws/{table_name}")
-# async def websocket_videochat(websocket: WebSocket, table_name: str):
-#     try:
-#         await websocket.accept()
-#         session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
-#         while True:
-#             try:
+@router.websocket("/ws/{table_name}")
+async def websocket_videochat(websocket: WebSocket, table_name: str):
+    """
+    Innitiate the chat with the nearest similarity search result from the given input text.
 
-#                 data = await websocket.receive_text()
-#                 embeddings = [prompt_text_to_embedding(data).tolist()]
-#                 result = similarity_search(
-#                     text_embedding=embeddings, table_name=table_name, session=session)
+    Args:
+        websocket (WebSocket)
+        table_name (str)
 
-#                 await websocket.send_text(f"Message text was: {embeddings}")
-#             except Exception as err:
-#                 print(f"Error at websocket_videochat {err}")
-#                 break
-#     except Exception as err:
-#         print(f"Error at websocket_endpoint {err}")
-#         await websocket.close()
-#         raise HTTPException(
-#             status_code=400, detail="Error at websocket_endpoint")
-#     finally:
-#         print("Closing the session")
-#         session.close()
+    Raises:
+        HTTPException
+    """
+    try:
+        await websocket.accept()
+        session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
+        while True:
+            try:
+                data = await websocket.receive_text()
+                embeddings = prompt_text_to_embedding(data)
+                search_formatted_embeddings = [embeddings.tolist()]
+                result = similarity_search(text_embedding=search_formatted_embeddings,
+                                           table_name=table_name, session=session)
+                result_transcript = result[0]["transcript"].iat[0]
+                await websocket.send_text(f"Similar result is: {result_transcript}")
+                await websocket.close()
+                session.close()
+            except Exception as err:
+                print(f"Error at websocket_videochat {err}")
+                break
+    except Exception as err:
+        print(f"Error at websocket_endpoint {err}")
+        raise HTTPException(
+            status_code=400, detail="Error at websocket_endpoint")

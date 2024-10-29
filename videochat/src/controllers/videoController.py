@@ -330,7 +330,6 @@ def similarity_search(text_embedding: List[List], session: kdbai.Session, table_
     """
     try:
         table = session.database("default").table(table_name)
-        print("Text embedding", text_embedding)
         index_name = 'vectorIndex'
         result_df = table.search(vectors={index_name: text_embedding}, n=1)
         return result_df
