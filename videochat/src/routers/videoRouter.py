@@ -147,7 +147,7 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
     Innitiate the chat with the nearest similarity search result from the given input text.
 
     Args:
-        websocket (WebSocket)
+        websocket (WebSocket):
         table_name (str)
 
     Raises:
@@ -157,20 +157,17 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
         await websocket.accept()
         session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
         while True:
-            try:
-                data = await websocket.receive_text()
-                embeddings = prompt_text_to_embedding(data)
-                search_formatted_embeddings = [embeddings.tolist()]
-                result = similarity_search(text_embedding=search_formatted_embeddings,
-                                           table_name=table_name, session=session)
-                result_transcript = result[0]["transcript"].iat[0]
-                await websocket.send_text(f"Similar result is: {result_transcript}")
-                await websocket.close()
-                session.close()
-            except Exception as err:
-                print(f"Error at websocket_videochat {err}")
-                break
+            data = await websocket.receive_text()
+            embeddings = prompt_text_to_embedding(data)
+            search_formatted_embeddings = [embeddings.tolist()]
+            result = similarity_search(text_embedding=search_formatted_embeddings,
+                                       table_name=table_name, session=session)
+            result_transcript = result[0]["transcript"].iat[0]
+            await websocket.send_text(f"Similar result is: {result_transcript}")
     except Exception as err:
         print(f"Error at websocket_endpoint {err}")
         raise HTTPException(
             status_code=400, detail="Error at websocket_endpoint")
+    finally:
+        await websocket.close()
+        session.close()
