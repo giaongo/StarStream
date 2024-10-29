@@ -1,7 +1,7 @@
 from typing import List
 from ...ImageBind.imagebind.models import imagebind_model
 from ...ImageBind.imagebind import data
-from .variables import ml_models
+from .variables import AI_MODEL, ml_models
 import torch
 import json
 import numpy as np
@@ -46,13 +46,13 @@ def get_embedding_vector(inputs: object):
     Returns:
         np.ndarray: embedding vector
     """
-    if "imagebind" not in ml_models:
+    if AI_MODEL.IMAGEBIND.name not in ml_models:
         print("Imagebind model not found")
         return None
 
     try:
         with torch.no_grad():
-            embedding_result = ml_models["imagebind"](inputs)
+            embedding_result = ml_models[AI_MODEL.IMAGEBIND.name](inputs)
         for _, value in embedding_result.items():
             vec = value.reshape(-1)
             vec = vec.numpy()

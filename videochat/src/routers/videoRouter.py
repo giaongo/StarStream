@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, WebSocket, Request
 from pydantic import BaseModel
 import os
 from pathlib import Path
-from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, similarity_search, table_exists
+from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, generate_rag, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, similarity_search, table_exists
 from ..controllers.videoController import upload_dataframe_to_KDB
 import kdbai_client as kdbai
 import pandas as pd
@@ -99,7 +99,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:5002/video/ws/video_2024_10_20_13_26_49");
+            var ws = new WebSocket("ws://localhost:5002/video/ws/video_2024_10_29_11_41_58");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -124,23 +124,6 @@ async def greeting():
     return HTMLResponse(html)
 
 
-@router.get("/search")
-async def similar_search(data: str):
-    try:
-        session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
-
-        embeddings = prompt_text_to_embedding(data)
-
-        search_formatted_embeddings = [embeddings.tolist()]
-        print(f"Formated embeddings {search_formatted_embeddings}")
-        result = similarity_search(text_embedding=search_formatted_embeddings,
-                                   table_name="video_2024_10_20_13_26_49", session=session)
-        return {"msg": result[0]["transcript"].iat[0]}
-    except Exception as err:
-        print(f"Error at similar_search {err}")
-        raise HTTPException(status_code=400, detail="Error at similar_search")
-
-
 @router.websocket("/ws/{table_name}")
 async def websocket_videochat(websocket: WebSocket, table_name: str):
     """
@@ -163,7 +146,9 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
             result = similarity_search(text_embedding=search_formatted_embeddings,
                                        table_name=table_name, session=session)
             result_transcript = result[0]["transcript"].iat[0]
-            await websocket.send_text(f"Similar result is: {result_transcript}")
+            output_response = generate_rag(
+                prompt_text=data, retrieved_text=result_transcript)
+            await websocket.send_text(f"AI ASSISTANT\n: {output_response}")
     except Exception as err:
         print(f"Error at websocket_endpoint {err}")
         raise HTTPException(

@@ -13,6 +13,7 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 import kdbai_client as kdbai
+from .variables import AI_MODEL, ml_models
 
 load_dotenv(find_dotenv())
 KDB_ENDPOINT = os.getenv("KDB_ENDPOINT_URL")
@@ -335,3 +336,29 @@ def similarity_search(text_embedding: List[List], session: kdbai.Session, table_
         return result_df
     except Exception as err:
         raise Exception(f"Error at similarity_search {err}")
+
+
+def generate_rag(prompt_text: str, retrieved_text: str) -> str:
+    """ passing the retrieved text from similarity search to the Gemini model to generate response
+
+    Args:
+        prompt_text (str): input from user
+        retrieved_text (str): retrieved text from similarity search
+
+    Raises:
+        Exception: model not found
+        Exception: error generating rag
+
+    Returns:
+        str: model output
+    """
+    try:
+        if AI_MODEL.GEMINI.name not in ml_models:
+            raise Exception("Gemini model not found")
+        query = f"You will answer the given prompt using attached content: ${prompt_text}"
+        rag_list = [query, retrieved_text]
+        response = ml_models[AI_MODEL.GEMINI.name].generate_content(rag_list)
+        return response.text
+
+    except Exception as err:
+        raise Exception(f"Error at generate_rag {err}")
