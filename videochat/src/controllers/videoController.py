@@ -355,9 +355,8 @@ def generate_rag(prompt_text: str, retrieved_text: str) -> str:
     try:
         if AI_MODEL.GEMINI.name not in ml_models:
             raise Exception("Gemini model not found")
-        query = f"You will answer the given prompt using attached content: ${prompt_text}"
-        rag_list = [query, retrieved_text]
-        response = ml_models[AI_MODEL.GEMINI.name].generate_content(rag_list)
+        query = f"Generate a descriptive answer for the given prompt: {prompt_text} with this context: {retrieved_text}"
+        response = ml_models[AI_MODEL.GEMINI.name].generate_content(query)
         return response.text
 
     except Exception as err:

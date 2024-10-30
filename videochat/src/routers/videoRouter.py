@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, WebSocket, Request
+from fastapi import APIRouter, HTTPException, WebSocket, Request, WebSocketDisconnect
 from pydantic import BaseModel
 import os
 from pathlib import Path
@@ -124,6 +124,34 @@ async def greeting():
     return HTMLResponse(html)
 
 
+@router.get("/search")
+async def similar_search(data: str):
+    """This route is for testing the prompt response from Gemini with the given input prompt and embeddings from database
+
+    Args:
+        data (str)
+    Raises:
+        HTTPException
+
+    Returns:
+        _type_
+    """
+    try:
+        session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
+        embeddings = prompt_text_to_embedding(data)
+        search_formatted_embeddings = [embeddings.tolist()]
+        result = similarity_search(text_embedding=search_formatted_embeddings,
+                                   table_name="video_2024_10_20_13_26_49", session=session)
+        result_transcript = result[0]["transcript"].iat[0]
+        print("Result transcript ", result_transcript)
+        output_response = generate_rag(
+            prompt_text=data, retrieved_text=result_transcript)
+        return {"msg": output_response}
+    except Exception as err:
+        print(f"Error at similar_search {err}")
+        raise HTTPException(status_code=400, detail="Error at similar_search")
+
+
 @router.websocket("/ws/{table_name}")
 async def websocket_videochat(websocket: WebSocket, table_name: str):
     """
@@ -148,11 +176,12 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
             result_transcript = result[0]["transcript"].iat[0]
             output_response = generate_rag(
                 prompt_text=data, retrieved_text=result_transcript)
-            await websocket.send_text(f"AI ASSISTANT\n: {output_response}")
+            await websocket.send_text(output_response)
+    except WebSocketDisconnect:
+        print("Client disconnected")
     except Exception as err:
         print(f"Error at websocket_endpoint {err}")
         raise HTTPException(
             status_code=400, detail="Error at websocket_endpoint")
     finally:
-        await websocket.close()
         session.close()
