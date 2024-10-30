@@ -174,6 +174,7 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
             result = similarity_search(text_embedding=search_formatted_embeddings,
                                        table_name=table_name, session=session)
             result_transcript = result[0]["transcript"].iat[0]
+            print("Result transcript ", result_transcript)
             output_response = generate_rag(
                 prompt_text=data, retrieved_text=result_transcript)
             await websocket.send_text(output_response)

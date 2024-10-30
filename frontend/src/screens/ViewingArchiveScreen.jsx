@@ -6,7 +6,8 @@ import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { baseUrl } from "../utils/variables";
 import { useVideo } from "../hooks/ApiHooks";
-import VideoChat from "../components/VideoChat";
+import AIVideoChat from "../components/AIVideoChat";
+import LoadingDots from "../components/LoadingDots";
 
 const ViewingArchiveScreen = () => {
   const playerRef = useRef(null);
@@ -16,6 +17,7 @@ const ViewingArchiveScreen = () => {
   const startDate = new Date(videoInfo?.event_start_date);
   const endDate = new Date(videoInfo?.event_end_date);
   const [chatbotInitiated, setChatbotInitiated] = useState(false);
+  const [dotLoading, setDotLoading] = useState(false);
 
   const videoJsOptions = {
     autoplay: true,
@@ -25,14 +27,13 @@ const ViewingArchiveScreen = () => {
     experimentalSvgIcons: true,
     sources: [
       {
-        // src: videoInfo?.video_path,
-        src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        src: videoInfo?.video_path,
         type: "video/mp4",
       },
     ],
     tracks: [
       {
-        // src: videoInfo?.subtitle_path,
+        src: videoInfo?.subtitle_path,
         kind: "subtitles",
         srclang: "en",
         label: "English",
@@ -56,13 +57,17 @@ const ViewingArchiveScreen = () => {
 
   const initChatBot = async () => {
     try {
-      const urlData = {
-        video_url: videoInfo?.video_path,
-        subtitle_url: videoInfo?.subtitle_path,
-      };
-      const result = await initiateAIVideoChat(urlData);
-      if (result) {
+      if (!chatbotInitiated) {
+        setDotLoading(true);
+        const urlData = {
+          video_url: videoInfo?.video_path,
+          subtitle_url: videoInfo?.subtitle_path,
+        };
+        await initiateAIVideoChat(urlData);
         setChatbotInitiated(true);
+        setDotLoading(false);
+      } else {
+        setChatbotInitiated(false);
       }
     } catch (error) {
       console.error("Error init chatbot: ", error);
@@ -76,7 +81,7 @@ const ViewingArchiveScreen = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        mt: 20,
+        mt: 10,
       }}
     >
       <Box
@@ -122,17 +127,32 @@ const ViewingArchiveScreen = () => {
 
       <Box sx={{ width: "60%", mb: 12 }}>
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+
         <Button
           variant="contained"
           sx={{ mt: 5, borderRadius: "0px" }}
           onClick={() => initChatBot()}
         >
-          Start VideoChat
+          {!chatbotInitiated ? "Start Videochat" : "Stop Videochat"}
         </Button>
-
+        {dotLoading && (
+          <Box sx={{ mt: 5 }}>
+            <Typography variant="h6" color="white">
+              This AI chatbot process may take a while. Please be patient!
+              <LoadingDots />
+            </Typography>
+          </Box>
+        )}
         {chatbotInitiated && (
-          <Box sx={{ backgroundColor: "black", p: 3 }}>
-            <VideoChat table_name={"video_2024_10_29_11_41_58"} />
+          <Box
+            sx={{
+              backgroundColor: "black",
+              p: 3,
+              boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
+              borderRadius: "5px",
+            }}
+          >
+            <AIVideoChat table_name={"video_2024_10_29_11_41_58"} />
           </Box>
         )}
       </Box>
