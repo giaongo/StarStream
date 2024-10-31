@@ -1,0 +1,10 @@
+fastapi[standard]
+pydantic
+webvtt-py
+opencv-python
+uvicorn[standard]
+pandas
+python-dotenv
+kdbai-client
+websockets
+google-generativeai

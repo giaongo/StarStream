@@ -1,4 +1,4 @@
-import { baseUrl } from "../utils/variables";
+import { baseUrl, videoChatBaseUrl } from "../utils/variables";
 import { logoutAndRemoveAdmin } from "../reducers/userReducer";
 
 /**
@@ -217,7 +217,31 @@ const useVideo = (navigate, dispatch) => {
       throw new Error(`getArchives: ${error.message}`);
     }
   };
-  return { getArchives };
+
+  /**
+   * Initiate AI video chat
+   */
+  const initiateAIVideoChat = async (urlData) => {
+    const options = {
+      method: "POST",
+      body: JSON.stringify(urlData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const result = await doFetch(
+        `http://${videoChatBaseUrl}/video/process`,
+        options,
+        navigate,
+        dispatch
+      );
+      return result;
+    } catch (error) {
+      throw new Error(`initiateAIVideoChat: ${error.message}`);
+    }
+  };
+  return { getArchives, initiateAIVideoChat };
 };
 
 export { useAuthentication, useEvent, useVideo };

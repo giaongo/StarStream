@@ -41,15 +41,41 @@ services:
 
   nms:
     build: ./nms 
-    # image: giaongo/streaming_server
     ports:
       - "1935:1935"
       - "8000:8000"
       - "8443:8443"
     env_file: ./nms/.env
     volumes:
+      - ./nms:/nms
       - ./nms/media:/nms/media:rw
+      - /nms/node_modules
     container_name: nms
+    depends_on:
+      - whisper
+
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=openai_whisper
+    volumes:
+      - ./nms/model:/root/.cache/whisper
+    container_name: whisper
+
+  video_chat: 
+    build: ./videochat
+    ports: 
+      - "5002:5002"
+    volumes:
+      - ./videochat/src:/videochat/src
+      - ./videochat/videos:/videochat/videos
+      - ./videochat/.checkpoints:/videochat/.checkpoints
+    env_file: ./videochat/.env
+    container_name: video_chat
+
 
 volumes:
   persist-volume:

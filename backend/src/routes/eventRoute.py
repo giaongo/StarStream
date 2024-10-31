@@ -81,7 +81,9 @@ async def insert_video_archive_info():
 
     result = await add_video_archive(video_url=data['video_url'],
                                      streaming_key=data['streaming_key'],
-                                     combined_name=data['combined_name'])
+                                     combined_name=data['combined_name'],
+                                     subtitle_url=data['subtitle_url']
+                                     )
 
     if not result:
         return {'msg': 'error adding video archive'}, 400

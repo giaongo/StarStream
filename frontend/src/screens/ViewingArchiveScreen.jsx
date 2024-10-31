@@ -1,17 +1,34 @@
-import React from "react";
-import { Box, CardMedia, Typography } from "@mui/material";
+import React, { lazy, useEffect, useState } from "react";
+import { Box, CardMedia, Typography, Button } from "@mui/material";
 import videojs from "video.js";
 import VideoJS from "../components/VideoJS";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { baseUrl } from "../utils/variables";
+import { useVideo } from "../hooks/ApiHooks";
+import AIVideoChat from "../components/AIVideoChat";
+import LoadingDots from "../components/LoadingDots";
+import { useDispatch } from "react-redux";
+import { displayNotification } from "../reducers/notificationReducer";
 
 const ViewingArchiveScreen = () => {
   const playerRef = useRef(null);
   const location = useLocation();
+  const { initiateAIVideoChat } = useVideo();
   const videoInfo = location.state?.video;
   const startDate = new Date(videoInfo?.event_start_date);
   const endDate = new Date(videoInfo?.event_end_date);
+  const [chatbotInitiated, setChatbotInitiated] = useState(false);
+  const [dotLoading, setDotLoading] = useState(false);
+  const dispatch = useDispatch();
+  const table_name =
+    "video_" +
+    videoInfo?.video_path
+      .split("/")
+      .reverse()[0]
+      .split(".")[0]
+      .replace(/-/g, "_");
+
   const videoJsOptions = {
     autoplay: true,
     controls: true,
@@ -22,6 +39,15 @@ const ViewingArchiveScreen = () => {
       {
         src: videoInfo?.video_path,
         type: "video/mp4",
+      },
+    ],
+    tracks: [
+      {
+        src: videoInfo?.subtitle_path,
+        kind: "subtitles",
+        srclang: "en",
+        label: "English",
+        default: true,
       },
     ],
   };
@@ -39,6 +65,30 @@ const ViewingArchiveScreen = () => {
     });
   };
 
+  const initChatBot = async () => {
+    try {
+      if (!chatbotInitiated) {
+        setDotLoading(true);
+        const urlData = {
+          video_url: videoInfo?.video_path,
+          subtitle_url: videoInfo?.subtitle_path,
+        };
+        await initiateAIVideoChat(urlData);
+        setChatbotInitiated(true);
+        setDotLoading(false);
+      } else {
+        setChatbotInitiated(false);
+      }
+    } catch (error) {
+      dispatch(
+        displayNotification(
+          { message: "Error initiating chatbot", severity: "error" },
+          3000
+        )
+      );
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -46,7 +96,7 @@ const ViewingArchiveScreen = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        mt: 20,
+        mt: 10,
       }}
     >
       <Box
@@ -92,6 +142,35 @@ const ViewingArchiveScreen = () => {
 
       <Box sx={{ width: "60%", mb: 12 }}>
         <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+
+        <Button
+          variant="contained"
+          sx={{ mt: 5, borderRadius: "0px" }}
+          onClick={() => initChatBot()}
+        >
+          {!chatbotInitiated ? "Start Videochat" : "Stop Videochat"}
+        </Button>
+        {dotLoading && (
+          <Box sx={{ mt: 5 }}>
+            <Typography variant="h6" color="white">
+              Depending on the size of the video archive, the video processing
+              may take quite long. Please be patient!
+              <LoadingDots />
+            </Typography>
+          </Box>
+        )}
+        {chatbotInitiated && (
+          <Box
+            sx={{
+              backgroundColor: "black",
+              p: 3,
+              boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.5)",
+              borderRadius: "5px",
+            }}
+          >
+            <AIVideoChat table_name={table_name} />
+          </Box>
+        )}
       </Box>
     </Box>
   );

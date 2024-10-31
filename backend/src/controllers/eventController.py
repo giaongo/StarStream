@@ -78,7 +78,7 @@ async def get_viewing_url(event_id: int, app: QuartSIO) -> str | None:
         return None
 
 
-async def add_video_archive(video_url: str, streaming_key: str, combined_name: str) -> bool:
+async def add_video_archive(video_url: str, streaming_key: str, combined_name: str, subtitle_url: str) -> bool:
     """ Add video archive url and streaming key to database
 
     Args:
@@ -90,11 +90,12 @@ async def add_video_archive(video_url: str, streaming_key: str, combined_name: s
     """
 
     try:
-        result = await g.connection.execute("""INSERT INTO videos_archives (video_path, key_name, file_name) 
-                                            VALUES (:video_url, :streaming_key, :combined_name)""",
+        result = await g.connection.execute("""INSERT INTO videos_archives (video_path, key_name, video_file_name, subtitle_path) 
+                                            VALUES (:video_url, :streaming_key, :combined_name, :subtitle_url)""",
                                             {'video_url': video_url,
                                              'streaming_key': streaming_key,
-                                             'combined_name': combined_name
+                                             'combined_name': combined_name,
+                                             'subtitle_url': subtitle_url
                                              })
         if result:
             print(f'Video archive added successfully ', result)
@@ -120,7 +121,8 @@ async def get_video_archives() -> list[dict] | None:
                                                 streaming_key, 
                                                 video_id, 
                                                 video_path, 
-                                                file_name  
+                                                video_file_name, 
+                                                subtitle_path
                                                 FROM events INNER JOIN videos_archives 
                                                 ON events.streaming_key = videos_archives.key_name
                                                 ORDER BY event_start_date DESC;
@@ -137,7 +139,8 @@ async def get_video_archives() -> list[dict] | None:
                 streaming_key=archive["streaming_key"],
                 video_id=archive["video_id"],
                 video_path=archive["video_path"],
-                file_name=archive["file_name"]
+                video_file_name=archive["video_file_name"],
+                subtitle_path=archive["subtitle_path"]
             ).__dict__ for archive in archives]
             return video_archives
     except Exception as error:

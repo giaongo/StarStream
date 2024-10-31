@@ -1,14 +1,14 @@
-FROM node
+FROM node:22.10.0-slim
 
 WORKDIR /nms
-
-COPY package.json .
-
-RUN npm install
 
 RUN apt-get update
 
 RUN apt-get install -y ffmpeg
+
+COPY package.json .
+
+RUN npm install --force --loglevel verbose
 
 COPY . .
 
