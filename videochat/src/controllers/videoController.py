@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import os
+import shutil
 from pathlib import Path
 from urllib.request import urlretrieve
 import webvtt
@@ -361,3 +362,15 @@ def generate_rag(prompt_text: str, retrieved_text: str) -> str:
 
     except Exception as err:
         raise Exception(f"Error at generate_rag {err}")
+
+
+def clear_temp(dir_path: str) -> bool:
+    try:
+        for filename in os.listdir(dir_path):
+            file_path = os.path.join(dir_path, filename)
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+    except Exception as err:
+        raise Exception(f"Error at clear_temp {err}")

@@ -2,14 +2,12 @@ from fastapi import APIRouter, HTTPException, WebSocket, Request, WebSocketDisco
 from pydantic import BaseModel
 import os
 from pathlib import Path
-from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, generate_rag, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, similarity_search, table_exists
+from ..controllers.videoController import KDB_API_KEY, KDB_ENDPOINT, clear_temp, generate_rag, process_image_text_embeddings, retrieve_url_to_local_file, process_video_subtitle_to_metadata, similarity_search, table_exists
 from ..controllers.videoController import upload_dataframe_to_KDB
 import kdbai_client as kdbai
-import pandas as pd
 from fastapi.responses import JSONResponse
 from fastapi.responses import HTMLResponse
 from ..controllers.helpers import prompt_text_to_embedding
-import numpy as np
 
 router = APIRouter(
     prefix="/video",
@@ -41,6 +39,7 @@ async def check_and_process_video_info(video_info: VideoInfo):
     Note: The table name is deprived of the video url. Each video archive will have its own table in the KDB.AI Vector Database.
     """
     try:
+
         # Create a session to interact with KDB.AI Vector Database
         session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
 
@@ -78,6 +77,10 @@ async def check_and_process_video_info(video_info: VideoInfo):
 
         # close the session
         session.close()
+
+        # remove the video and subtitle files
+        clear_temp(video_path)
+
         return JSONResponse(status_code=201, content={"msg": f"Table created and upload result is: {uploadResult}"})
     except Exception as err:
         print(f"Error processing video {err}")
@@ -121,6 +124,11 @@ html = """
 
 @router.get("/greeting")
 async def greeting():
+    """ This route is for testing the websocket chat with the given html template
+
+    Returns:
+        _type_
+    """
     return HTMLResponse(html)
 
 
@@ -169,12 +177,12 @@ async def websocket_videochat(websocket: WebSocket, table_name: str):
         session = kdbai.Session(endpoint=KDB_ENDPOINT, api_key=KDB_API_KEY)
         while True:
             data = await websocket.receive_text()
+            print("Data received ", data)
             embeddings = prompt_text_to_embedding(data)
             search_formatted_embeddings = [embeddings.tolist()]
             result = similarity_search(text_embedding=search_formatted_embeddings,
                                        table_name=table_name, session=session)
             result_transcript = result[0]["transcript"].iat[0]
-            print("Result transcript ", result_transcript)
             output_response = generate_rag(
                 prompt_text=data, retrieved_text=result_transcript)
             await websocket.send_text(output_response)
