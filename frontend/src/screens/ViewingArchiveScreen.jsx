@@ -1,4 +1,4 @@
-import React, { lazy, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
 import videojs from "video.js";
 import VideoJS from "../components/VideoJS";
@@ -8,6 +8,8 @@ import { baseUrl } from "../utils/variables";
 import { useVideo } from "../hooks/ApiHooks";
 import AIVideoChat from "../components/AIVideoChat";
 import LoadingDots from "../components/LoadingDots";
+import { useDispatch } from "react-redux";
+import { displayNotification } from "../reducers/notificationReducer";
 
 const ViewingArchiveScreen = () => {
   const playerRef = useRef(null);
@@ -18,6 +20,14 @@ const ViewingArchiveScreen = () => {
   const endDate = new Date(videoInfo?.event_end_date);
   const [chatbotInitiated, setChatbotInitiated] = useState(false);
   const [dotLoading, setDotLoading] = useState(false);
+  const dispatch = useDispatch();
+  const table_name =
+    "video_" +
+    videoInfo?.video_path
+      .split("/")
+      .reverse()[0]
+      .split(".")[0]
+      .replace(/-/g, "_");
 
   const videoJsOptions = {
     autoplay: true,
@@ -70,7 +80,12 @@ const ViewingArchiveScreen = () => {
         setChatbotInitiated(false);
       }
     } catch (error) {
-      console.error("Error init chatbot: ", error);
+      dispatch(
+        displayNotification(
+          { message: "Error initiating chatbot", severity: "error" },
+          3000
+        )
+      );
     }
   };
 
@@ -138,7 +153,8 @@ const ViewingArchiveScreen = () => {
         {dotLoading && (
           <Box sx={{ mt: 5 }}>
             <Typography variant="h6" color="white">
-              This AI chatbot process may take a while. Please be patient!
+              Depending on the size of the video archive, the video processing
+              may take quite long. Please be patient!
               <LoadingDots />
             </Typography>
           </Box>
@@ -152,7 +168,7 @@ const ViewingArchiveScreen = () => {
               borderRadius: "5px",
             }}
           >
-            <AIVideoChat table_name={"video_2024_10_29_11_41_58"} />
+            <AIVideoChat table_name={table_name} />
           </Box>
         )}
       </Box>

@@ -45,7 +45,7 @@ const AIVideoChat = ({ table_name }) => {
         wsRef.current = null;
       }
     };
-  }, [videoChatBaseUrl, table_name]);
+  }, []);
 
   // Send question message to AI
   const handleSend = async (event) => {
@@ -88,10 +88,10 @@ const AIVideoChat = ({ table_name }) => {
         }}
       >
         {chats.map((chat, id) => (
-          <>
-            <AIVideoChatContent key={id} chatContent={chat} />
+          <Box key={id}>
+            <AIVideoChatContent chatContent={chat} />
             {id === chats.length - 1 && loadingDots && <LoadingDots />}
-          </>
+          </Box>
         ))}
       </List>
       <Divider sx={{ backgroundColor: "lightGrey", mb: 1.5 }} />

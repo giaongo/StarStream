@@ -107,7 +107,7 @@ const extractAudioFromVideo = (videoFilePath, streamingKey) => {
           combinedDirVideoFilename,
           cdnSubtitlePath
         );
-        console.log("Upload to DB result: ", uploadToDBResult);
+
         if (!uploadToDBResult) {
           throw new Error("Error upload video to backend");
         }
