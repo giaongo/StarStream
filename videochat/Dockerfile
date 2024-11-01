@@ -11,7 +11,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
 
 COPY ./ImageBind ./ImageBind
 
-RUN python -m pip install --default-timeout=100 --no-cache-dir ./ImageBind
+RUN python -m pip install --default-timeout=300 --no-cache-dir ./ImageBind
 
 COPY requirements.txt .
 
