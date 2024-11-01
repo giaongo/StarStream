@@ -1,0 +1,12 @@
+services:
+  video_chat: 
+    build: ./videochat
+    ports: 
+      - "5002:5002"
+    volumes:
+      - persist-checkpoints:/videochat/.checkpoints
+    env_file: ./videochat/.env
+    container_name: video_chat
+
+volumes:
+  persist-checkpoints:
