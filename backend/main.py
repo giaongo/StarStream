@@ -20,7 +20,7 @@ async def initial_setup():
                                                     email=os.getenv(
                                                         "ADMIN_EMAIL"),
                                                     password=os.getenv("ADMIN_PASSWORD")),
-                                                dbUrl=f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgresql:5432/{os.getenv('POSTGRES_DB')}")
+                                                dbUrl=f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_URL')}/{os.getenv('POSTGRES_DB')}")
         print('setup result', setup_result)
 
     except Exception as error:
