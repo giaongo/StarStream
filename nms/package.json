@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "cross-env NODE_ENV=production node app.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.663.0",
     "axios": "^1.7.7",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "formdata-node": "^6.0.3",
     "node-media-server": "^2.7.0",
