@@ -1,7 +1,7 @@
 const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://backend:5001"
-    : "http://frontend/api";
+    : "http://16.171.124.41/api";
 
 const whisperUrl =
   process.env.NODE_ENV === "development"
@@ -11,4 +11,4 @@ const whisperUrl =
 // TODO: Update cdnUrl
 const cdnUrl = "https://d2svo8w7e6o53b.cloudfront.net";
 
-export { backendUrl as baseUrl, cdnUrl, whisperUrl };
+export { baseUrl, cdnUrl, whisperUrl };
