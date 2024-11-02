@@ -1,0 +1,22 @@
+services:
+  nms:
+    image: giaongo/starstream-nms:1.0
+    ports:
+      - "1935:1935"
+      - "8000:8000"
+      - "8443:8443"
+    env_file: .env
+    container_name: nms
+    depends_on:
+      - whisper
+
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=openai_whisper
+    volumes:
+      - ./nms/model:/root/.cache/whisper
+    container_name: whisper
