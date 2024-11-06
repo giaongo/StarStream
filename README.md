@@ -15,18 +15,26 @@ The solution objective is to develop a custom streaming hub where the event broa
 ## Table of Contents
 
 - [Overview](#overview)
+- [Contributors](#contributors)
 - [Features](#features)
 - [Technologies](#technologies)
 - [Installation Instruction](#installation-instructions)
 - [Demo Video](#demo-video)
 - [Screenshots](#screenshots)
-- [Contributors](#contributors)
+
 
 
 ## Overview
 
 As part of Innovation Project, StartStream is a web-based solution developed for Nokia Garage Innovation to enhance the public event interaction and experiences with Nokia. 
 The project is a joint efforts of a team of five students from different degree majors. Our goal is to create fully-functional and creative streaming site for the public users and Nokia staff, meeting the Nokia's client requirements. 
+
+## Contributors
+1. [Giao Ngo](https://github.com/giaongo)
+2. [Adam Ahmethanov](https://github.com/adamahmethanov)
+3. [Teemu Salovaara](https://github.com/teemusalovaara)
+4. [Matias Lehtelä](https://github.com/Matiaslehtela)
+5. [Ricu Ruotsinsalo](https://github.com/Labrat32)
 
 ## Features
 - **Custom-built Streaming Server**: A fast and secured streaming server holding full control over the configuration and functionalities.
@@ -71,4 +79,6 @@ The solutions are built into different microservices using docker and docker com
   </a>
 </p>
 
- 
+
+
+
