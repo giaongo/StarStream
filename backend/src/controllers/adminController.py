@@ -58,9 +58,8 @@ async def data_initial_setup(defaultUser: User, dbUrl: str, app: App) -> bool:
     Returns:
         bool
     """
-    conn = await asyncpg.connect(dbUrl)
-
     try:
+        conn = await asyncpg.connect(dbUrl)
         admin_result = await add_default_admin(defaultUser=defaultUser, conn=conn)
         streaming_url = await fetch_streaming_url(conn=conn)
 

@@ -1,0 +1,12 @@
+services:
+  video_chat: 
+    image: giaongo/starstream-videochat:1.0
+    ports: 
+      - "5002:5002"
+    volumes:
+      - persist-checkpoints:/videochat/.checkpoints
+    env_file: .env
+    container_name: video_chat
+
+volumes:
+  persist-checkpoints:

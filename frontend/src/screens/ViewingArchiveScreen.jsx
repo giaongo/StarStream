@@ -148,7 +148,7 @@ const ViewingArchiveScreen = () => {
           sx={{ mt: 5, borderRadius: "0px" }}
           onClick={() => initChatBot()}
         >
-          {!chatbotInitiated ? "Start Videochat" : "Stop Videochat"}
+          {!chatbotInitiated ? "Start Video Q&A" : "Stop Video Q&A"}
         </Button>
         {dotLoading && (
           <Box sx={{ mt: 5 }}>
