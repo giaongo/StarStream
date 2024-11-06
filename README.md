@@ -9,13 +9,14 @@
 
 ## Web Application Project With Streaming Capabilities
 
-StarStream is an innovative web-based application developed for Nokia Garage Innovation. The solution provides the seasmless streaming platform for the public event participants to experience and interact with the latest events hosted by Nokia Garage.
+StarStream is an innovative web-based application developed for Nokia Garage Innovation. The solution provides a seamless streaming platform for the public event participants to experience and interact with the latest events hosted by Nokia Garage.
 The solution objective is to develop a custom streaming hub where the event broadcasting and cutting-edge AI features can all be present. 
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
+- [Technologies](#technologies)
 - [Installation Instruction](#installation-instructions)
 - [Demo Video](#demo-video)
 - [Screenshots](#screenshots)
@@ -36,3 +37,29 @@ The project is a joint efforts of a team of five students from different degree 
 - **Video Subtitles**:  The solution offers audio transcription capabilities for every past video archives, ensuring the accessibility for individuals with disabilities.
 - **AI Video Q&A**: To enhance the event understanding, the solutions offers an instant AI Video Q&A in every past event videos, allowing the users to ask questions about the related video, and graph the key concepts that the event demonstrated.
 - **Event Monitoring for Admin**: This feature allows the event admin to add, delete events, and view the security streaming info for every event. 
+
+## Technologies
+The solutions are built into different microservices using docker and docker compose. The solution will be hosted on AWS Cloud
+
+- **Web**:
+1. Frontend: ReactJS, React Redux, JavaScript, Material UI.
+2. Backend: Python Quart, Python-socketio
+3. Database: PostgreSQL
+
+- **Streaming**:
+1. Node Media Server: NodeJS, AWS SDK for JavaScript
+2. Whisper AI
+
+- **AI Video Q&A**:
+1. ImageBind by MetaAI: [ImageBind Info](https://imagebind.metademolab.com/)
+2. KDB Vector Database: [KDB.AI](https://cloud.kdb.ai/auth/realms/kdbai/protocol/openid-connect/auth?response_type=code&nonce=fbacaaf20166bb28bcc84574c4bbf269&state=4e847319b9c87366386a866648531965&client_id=gui&redirect_uri=https%3A%2F%2Fcloud.kdb.ai%2Fredirect_uri&scope=openid%20email%20profile)
+3. Gemini Flash 1.5: [Gemini 1.5](https://deepmind.google/technologies/gemini/flash/)
+4. FastAPI
+
+**AWS Resources**:
+1. AWS EC2 (m5.2xlarge, c5.xlarge, t3.medium)
+2. EBS (40GB)
+3. AWS S3
+4. AWS CDN
+
+ 
