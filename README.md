@@ -62,4 +62,13 @@ The solutions are built into different microservices using docker and docker com
 3. AWS S3
 4. AWS CDN
 
+
+## Demo Video
+<h3 align="center">Click to watch</h3>
+<p align="center">
+  <a href="https://youtu.be/9cOfdv-tzQg">
+    <img src="https://img.youtube.com/vi/9cOfdv-tzQg/0.jpg" alt="Watch the video">
+  </a>
+</p>
+
  
