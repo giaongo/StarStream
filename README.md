@@ -101,7 +101,7 @@ GOOGLE_API_KEY=<br/>
 5. Stop and remove docker containers(This clears out the running containers and network resources): `docker-compose down`
 6. **DEBUG:** Get into the docker database for further inspection: `docker exec -ti postgresql psql -U streamuser -d starstream_db`
 7. **DEV:** When there are fronend code changes, frontend react auto-reloads the frontend container
-8. **DEV:** When changes need to be made in backend, nms, and videochat -> manual restarting container is necessary by: `docker-compose restart backend`
+8. **DEV:** When changes need to be made in backend, nms, and videochat -> manual restarting container is necessary by: `docker-compose restart backend` OR `docker-compose restart nms` OR `docker-compose restart videochat`
 9. **DEV:** If you want to remove the persistent volume of postgres database: `docker volume rm  starstream_persist-volume`
 ## Demo Video
 <h3 align="center">Click to watch</h3>
