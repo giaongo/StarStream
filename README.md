@@ -70,7 +70,39 @@ The solutions are built into different microservices using docker and docker com
 3. AWS S3
 4. AWS CDN
 
+## Installation Instructions 
+### For Development Purposes:
+1. Create a list of envs:
+* In backend folder:  Create an .env inside the backend directory with the below format. Create a data field freely on your own:<br/>
+APP_SECRET=\
+POSTGRES_USER=\
+POSTGRES_PASSWORD=\
+POSTGRES_DB=\
+ADMIN_EMAIL=\
+ADMIN_PASSWORD=\
+JWT_SECRET=<br/>
 
+* In nms folder: Create an .env inside the nms directory with the below format.
+Refer to AWS documentation to create a user in AWS and get the necessary accesskey and key id. More information can be found in [AWS SDK Info](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started-nodejs.html) <br/>
+AWS_BUCKET_NAME=\
+AWS_ACCESSKEYID=\
+AWS_SECRETACCESSKEY=\
+AWS_REGION=<br/>
+
+* In videochat folder: Create an .env inside the videochat directory with the below format.
+Refer to [KDB.AI](https://code.kx.com/kdbai/latest/index.html) and [Google AI Studio](https://aistudio.google.com/app/prompts/new_chat) <br/>
+KDB_ENDPOINT_URL=\
+KDB_API_KEY=\
+GOOGLE_API_KEY=<br/>
+
+2. Ensure that Docker is installed in your computer.
+3. Open command prompt and go to main directory where docker-compose.yaml locates
+4. Run docker containers (Depending on your computer resources, this process may take quite long): `docker-compose up --build`
+5. Stop and remove docker containers(This clears out the running containers and network resources): `docker-compose down`
+6. **DEBUG:** Get into the docker database for further inspection: `docker exec -ti postgresql psql -U streamuser -d starstream_db`
+7. **DEV:** When there are fronend code changes, frontend react auto-reloads the frontend container
+8. **DEV:** When changes need to be made in backend, nms, and videochat -> manual restarting container is necessary by: `docker-compose restart backend`
+9. **DEV:** If you want to remove the persistent volume of postgres database: `docker volume rm  starstream_persist-volume`
 ## Demo Video
 <h3 align="center">Click to watch</h3>
 <p align="center">
