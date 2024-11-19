@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import socket from "socket.io-client";
 import PropTypes from "prop-types";
-import { baseUrl } from "../utils/variables";
+import { wsUrl } from "../utils/variables";
 import { Divider, List, Fab, FormControl, Box, Container } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SendIcon from "@mui/icons-material/Send";
@@ -16,7 +16,7 @@ const Chat = ({ eventId }) => {
   const [message, setMessage] = useState("");
   const [chatName, setChatName] = useState("");
   const socketClientRef = useRef();
-  const client = socket(baseUrl, { autoConnect: false });
+  const client = socket(wsUrl, { autoConnect: false });
 
   useEffect(() => {
     client.connect();
