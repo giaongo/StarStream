@@ -5,7 +5,7 @@ services:
       - "5001:5001"
     volumes:
       - persist-thumbnail:/backend/thumbnails
-    env_file: .env
+    env_file: ./backend/.env
     container_name: backend
     depends_on:
       postgresql:
@@ -20,7 +20,7 @@ services:
     volumes:
       - persist-volume:/var/lib/postgresql/data
     env_file:
-      - .env
+      - ./backend/.env
     container_name: postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U streamuser -d starstream_db"]
