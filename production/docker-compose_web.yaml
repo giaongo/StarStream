@@ -3,6 +3,8 @@ services:
     image: giaongo/starstream-backend:1.0
     ports:
       - "5001:5001"
+    volumes:
+      - persist-thumbnail:/backend/thumbnails
     env_file: .env
     container_name: backend
     depends_on:
@@ -38,3 +40,4 @@ services:
 
 volumes:
   persist-volume:
+  persist-thumbnail:
