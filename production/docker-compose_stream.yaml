@@ -1,6 +1,6 @@
 services:
   nms:
-    image: giaongo/starstream-nms:1.0
+    image: giaongo/starstream-nms:1.1
     ports:
       - "1935:1935"
       - "8000:8000"
@@ -9,6 +9,10 @@ services:
     container_name: nms
     depends_on:
       - whisper
+    environment:
+      - BACKEND_URL=http://16.171.124.41/api
+      - CDN_URL=https://d2svo8w7e6o53b.cloudfront.net
+      - WHISPER_URL=http://whisper:9000
 
   whisper:
     image: onerahmet/openai-whisper-asr-webservice:latest

@@ -128,18 +128,19 @@ The solutions are built into different microservices using docker and docker com
 
 Due to budget constraints, we have chosen to host the streaming solutions on AWS. For demonstration purposes, three remote AWS instances are allocated to separate services, ensuring optimal network bandwidth and computing performance. 3 resources are below:
 
-1. t3.medium - hosting web server (frontend, backend, postgres)
-2. c5.xlarge - hosting streaming server and whisperAI
-3. m5.2xlarge - hosting video Q&A
+1. t3.medium - hosting web server (frontend, backend, postgres) - 10GB EBS
+2. c5.xlarge - hosting streaming server and whisperAI - 10GB EBS
+3. m5.2xlarge - hosting video Q&A - 20GB EBS + 20GB EBS /dev/sdf (attached to /var/lib/docker)
 
 **Steps to setup**:
 
 1. Create 3 above-mentioned remote machines on EC2
 2. Installing docker:[Docker Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
 3. Installing docker compose: [Docker Compose Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
-4. Small edit and rebuild docker images with the given ip addresses of the remote machines:
+4. Allocate 20GB EBS to m5.2xlarge: [Make an Amazon EBS volume available for use](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html) and the final step is -> `sudo mount /dev/sdf /var/lib/docker`
+5. Small edit and rebuild docker images with the given ip addresses of the remote machines:
 
-   - cd frontend/utils/variables.js:
+   - `cd frontend/utils; nano variables.js`:
      - Change wsUrl to "http://<t3.medium public ip>:5001"
      - Change videoChatBaseUrl to "<c5.xlarge public ip>:5002"
    - Rebuild the docker images in frontend folder and push to your dockerhub:
@@ -150,31 +151,22 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
      - `docker build -t giaongo/starstream-frontend:1.2 -f Dockerfile.prod .`
      - `docker push giaongo/starstream-frontend:1.2`
 
-   - cd nms/utils/variables.js:
+   - `cd production; nano docker-compose_stream.yaml`:
 
-     - Change baseUrl to "http://<t3.medium public ip>/api";
-     - Change cdnUrl to "https://<cdn address>;
+     - Change BACKEND_URL to "http://<t3.medium public ip>/api";
+     - Change CDN_URL to "https://<cdn address>;
 
-   - Rebuild the docker images in nms folder and push to your dockerhub:
-
-     For example: (Please change the giaongo/starstream-nms:1.1 to yourdockerhub/starstream-nms:1.1)
-
-     - `cd nms`
-     - `docker build -t giaongo/starstream-nms:1.1 -f Dockerfile.prod .`
-     - `docker push giaongo/starstream-nm:1.1`
-
-   - cd production:
+   - `cd production`:
 
      - Replace giaongo/starstream-frontend:1.1 in docker-compose_web.yaml with yourdockerhub/starstream-frontend:1.2
-     - Replace giaongo/starstream-nms:1.0 in docker-compose_stream.yaml with yourdockerhub/starstream-nms:1.1
 
    - `mkdir web; cd web` in t3.medium, `mkdir stream;cd stream` in c5.xlarge, `mkdir videochat; cd videochat` in m5.2xlarge
    - Secured copy docker-compose_web.yaml to t3.medium, docker-compose_stream.yaml to c5.xlarge and docker-compose_videochat
      to m5.2xlarge
    - Change the name of all yaml files to docker-compose.yaml
-   - Copy all of the .envs to corresponsing web, stream and videochat folder
+   - Copy all of the .env files to corresponsing web, stream and videochat folder of the remote machines
    - Run `docker-compose up --build -d` for each remote machine
-   - Visit the web dns name to check the site
+   - Visit the web dns name of t3.medium to check the site
 
 ## Demo Video
 
