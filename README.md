@@ -128,16 +128,17 @@ The solutions are built into different microservices using docker and docker com
 
 Due to budget constraints, we have chosen to host the streaming solutions on AWS. For demonstration purposes, three remote AWS instances are allocated to separate services, ensuring optimal network bandwidth and computing performance. 3 resources are below:
 
-1. t3.medium - hosting web server (frontend, backend, postgres)
-2. c5.xlarge - hosting streaming server and whisperAI
-3. m5.2xlarge - hosting video Q&A
+1. t3.medium - hosting web server (frontend, backend, postgres) - 10GB EBS
+2. c5.xlarge - hosting streaming server and whisperAI - 10GB EBS
+3. m5.2xlarge - hosting video Q&A - 20GB EBS + 20GB EBS /dev/sdf (attached to /var/lib/docker)
 
 **Steps to setup**:
 
 1. Create 3 above-mentioned remote machines on EC2
 2. Installing docker:[Docker Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
 3. Installing docker compose: [Docker Compose Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
-4. Small edit and rebuild docker images with the given ip addresses of the remote machines:
+4. Allocate 20GB EBS to m5.2xlarge: [Make an Amazon EBS volume available for use](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html) and the final step is -> `sudo mount /dev/sdf /var/lib/docker`
+5. Small edit and rebuild docker images with the given ip addresses of the remote machines:
 
    - `cd frontend/utils; nano variables.js`:
      - Change wsUrl to "http://<t3.medium public ip>:5001"
