@@ -128,9 +128,9 @@ The solutions are built into different microservices using docker and docker com
 
 Due to budget constraints, we have chosen to host the streaming solutions on AWS. For demonstration purposes, three remote AWS instances are allocated to separate services, ensuring optimal network bandwidth and computing performance. 3 resources are below:
 
-1. t3.medium - hosting web server (frontend, backend, postgres) - 10GB EBS
-2. c5.xlarge - hosting streaming server and whisperAI - 10GB EBS
-3. m5.2xlarge - hosting video Q&A - 20GB EBS + 20GB EBS /dev/sdf (attached to /var/lib/docker)
+1. t3.medium - hosting web server (frontend, backend, postgres) with 10GB EBS
+2. c5.xlarge - hosting streaming server and whisperAI with 10GB EBS
+3. m5.2xlarge - hosting video Q&A with 20GB EBS and 20GB EBS /dev/sdf (attached to /var/lib/docker)
 
 **Steps to setup**:
 
