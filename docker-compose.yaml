@@ -54,6 +54,10 @@ services:
     container_name: nms
     depends_on:
       - whisper
+    environment:
+      - BACKEND_URL=http://backend:5001
+      - CDN_URL=https://d2svo8w7e6o53b.cloudfront.net
+      - WHISPER_URL=http://whisper:9000
 
   whisper:
     image: onerahmet/openai-whisper-asr-webservice:latest
@@ -67,16 +71,15 @@ services:
     container_name: whisper
 
   video_chat: 
-    build: ./videochat
+    image: giaongo/starstream-videochat:1.0
     ports: 
       - "5002:5002"
     volumes:
-      - ./videochat/src:/videochat/src
-      - ./videochat/videos:/videochat/videos
-      - ./videochat/.checkpoints:/videochat/.checkpoints
+      - persist-checkpoints:/videochat/.checkpoints
     env_file: ./videochat/.env
     container_name: video_chat
 
 
 volumes:
   persist-volume:
+  persist-checkpoints:
