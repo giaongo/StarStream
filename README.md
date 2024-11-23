@@ -168,7 +168,9 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
    - Run `docker-compose up --build -d` for each remote machine
    - Visit the web dns name of t3.medium to check the site
 
-## Solution Trailer Video
+## Demo Video
+
+**Trailer Video**:
 
 <h3 align="center">Click to watch</h3>
 <p align="center">
@@ -176,3 +178,12 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
     <img src="https://img.youtube.com/vi/P6h1FYovY6U/0.jpg" alt="Watch the video">
   </a>
 </p>
+
+**Full Feature Video with description**:
+<h3 align="center">Click to watch</h3>
+<p align="center">
+  <a href="https://youtu.be/9cOfdv-tzQg" target="_blank">
+    <img src="https://img.youtube.com/vi/9cOfdv-tzQg/0.jpg" alt="Watch the video">
+  </a>
+</p>
+
