@@ -138,7 +138,7 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
 2. Installing docker:[Docker Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
 3. Installing docker compose: [Docker Compose Installation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html)
 4. Allocate 20GB EBS to m5.2xlarge: [Make an Amazon EBS volume available for use](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html) and the final step is -> `sudo mount /dev/sdf /var/lib/docker`
-5. Small edit and rebuild docker images with the given ip addresses of the remote machines:
+5. Small edits:
 
    - `cd frontend/utils; nano variables.js`:
      - Change wsUrl to "http://<t3.medium public ip>:5001"
@@ -151,14 +151,13 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
      - `docker build -t giaongo/starstream-frontend:1.2 -f Dockerfile.prod .`
      - `docker push giaongo/starstream-frontend:1.2`
 
-   - `cd production; nano docker-compose_stream.yaml`:
-
-     - Change BACKEND_URL to "http://<t3.medium public ip>/api";
-     - Change CDN_URL to "https://<cdn address>;
-
    - `cd production`:
 
      - Replace giaongo/starstream-frontend:1.1 in docker-compose_web.yaml with yourdockerhub/starstream-frontend:1.2
+
+   - `cd production; nano docker-compose_stream.yaml`:
+     - Change BACKEND_URL to "http://<t3.medium public ip>/api";
+     - Change CDN_URL to "https://<cdn address>;
 
    - `mkdir web; cd web` in t3.medium, `mkdir stream;cd stream` in c5.xlarge, `mkdir videochat; cd videochat` in m5.2xlarge
    - Secured copy docker-compose_web.yaml to t3.medium, docker-compose_stream.yaml to c5.xlarge and docker-compose_videochat
