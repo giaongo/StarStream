@@ -20,8 +20,8 @@ The solution objective is to develop a custom streaming hub where the event broa
 - [Features](#features)
 - [Technologies](#technologies)
 - [Installation Instruction](#installation-instructions)
+- [Final Handin](#final-handin)
 - [Demo Video](#demo-video)
-- [Screenshots](#screenshots)
 
 ## Overview
 
@@ -151,9 +151,9 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
      - `docker build -t giaongo/starstream-frontend:1.2 -f Dockerfile.prod .`
      - `docker push giaongo/starstream-frontend:1.2`
 
-   - `cd production`:
+   - `cd production; nano docker-compose_web.yaml`:
 
-     - Replace giaongo/starstream-frontend:1.1 in docker-compose_web.yaml with yourdockerhub/starstream-frontend:1.2
+     - Replace giaongo/starstream-frontend:1.1 with yourdockerhub/starstream-frontend:1.2
 
    - `cd production; nano docker-compose_stream.yaml`:
      - Change BACKEND_URL to "http://<t3.medium public ip>/api";
@@ -163,9 +163,12 @@ Due to budget constraints, we have chosen to host the streaming solutions on AWS
    - Secured copy docker-compose_web.yaml to t3.medium, docker-compose_stream.yaml to c5.xlarge and docker-compose_videochat
      to m5.2xlarge
    - Change the name of all yaml files to docker-compose.yaml
-   - Copy all of the .env files to corresponsing web, stream and videochat folder of the remote machines
+   - Copy all of the .env files to corresponding web, stream and videochat folder of the remote machines
    - Run `docker-compose up --build -d` for each remote machine
    - Visit the web dns name of t3.medium to check the site
+  
+### Final Handin:
+[Final Hand In](https://docs.google.com/document/d/1AFohHYg5QMv_6FV09oG9tLq_8wnXNzg94RcStq5L2_Y/edit?usp=sharing)
 
 ## Demo Video
 
