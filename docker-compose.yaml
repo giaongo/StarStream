@@ -71,7 +71,7 @@ services:
     container_name: whisper
 
   video_chat: 
-    image: giaongo/starstream-videochat:1.0
+    image: giaongo/starstream-videochat:1.2
     ports: 
       - "5002:5002"
     volumes:
